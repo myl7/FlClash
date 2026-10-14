@@ -2,16 +2,21 @@ import 'dart:io';
 
 import 'models.dart';
 
-final _tagPattern = RegExp(r'^v(\d+)\.(\d+)\.(\d+)(?:-pre\.(\d+))?$');
+final _tagPattern = RegExp(
+  r'^v(\d+)\.(\d+)\.(\d+)'
+  r'(?:-pre\.(\d+)|-myl(\d+)\.(\d+)(?:-rc(\d+))?)?$',
+);
 
 const _fieldSeparator = '\u001f';
 const _recordSeparator = '\u001e';
 
-/// A release tag that matches the `vMAJOR.MINOR.PATCH[-pre.N]` contract.
+/// A release tag that matches the `vMAJOR.MINOR.PATCH[-pre.N]` contract, or
+/// the fork's `vMAJOR.MINOR.PATCH-myl<N>.<M>[-rc<K>]`.
 ///
 /// Every other tag in the repository is ignored on purpose: `backup-pre-squash-*`
 /// and similar bookkeeping tags would otherwise show up in the generated
-/// changelog as fake version sections.
+/// changelog as fake version sections. A fork tag counts as a release of its
+/// own, so it partitions history and is never filtered as a prerelease.
 class VersionTag implements Comparable<VersionTag> {
   const VersionTag({
     required this.name,
@@ -19,6 +24,9 @@ class VersionTag implements Comparable<VersionTag> {
     required this.minor,
     required this.patch,
     this.pre,
+    this.myl,
+    this.mylPatch,
+    this.rc,
   });
 
   final String name;
@@ -26,10 +34,13 @@ class VersionTag implements Comparable<VersionTag> {
   final int minor;
   final int patch;
   final int? pre;
+  final int? myl;
+  final int? mylPatch;
+  final int? rc;
 
   bool get isPrerelease => pre != null;
 
-  String get version => '$major.$minor.$patch';
+  String get version => name.substring(1);
 
   static VersionTag? tryParse(String name) {
     final match = _tagPattern.firstMatch(name.trim());
@@ -42,6 +53,9 @@ class VersionTag implements Comparable<VersionTag> {
       minor: int.parse(match.group(2)!),
       patch: int.parse(match.group(3)!),
       pre: match.group(4) == null ? null : int.parse(match.group(4)!),
+      myl: match.group(5) == null ? null : int.parse(match.group(5)!),
+      mylPatch: match.group(6) == null ? null : int.parse(match.group(6)!),
+      rc: match.group(7) == null ? null : int.parse(match.group(7)!),
     );
   }
 
@@ -59,16 +73,46 @@ class VersionTag implements Comparable<VersionTag> {
     if (byPatch != 0) {
       return byPatch;
     }
-    if (pre == null && other.pre == null) {
+    if (pre != null || other.pre != null) {
+      if (pre == null) {
+        return 1;
+      }
+      if (other.pre == null) {
+        return -1;
+      }
+      final byPre = pre!.compareTo(other.pre!);
+      if (byPre != 0) {
+        return byPre;
+      }
       return 0;
     }
-    if (pre == null) {
-      return 1;
+    if (myl == null && other.myl == null) {
+      return 0;
     }
-    if (other.pre == null) {
+    if (myl == null) {
       return -1;
     }
-    return pre!.compareTo(other.pre!);
+    if (other.myl == null) {
+      return 1;
+    }
+    final byMyl = myl!.compareTo(other.myl!);
+    if (byMyl != 0) {
+      return byMyl;
+    }
+    final byMylPatch = mylPatch!.compareTo(other.mylPatch!);
+    if (byMylPatch != 0) {
+      return byMylPatch;
+    }
+    if (rc == null && other.rc == null) {
+      return 0;
+    }
+    if (rc == null) {
+      return 1;
+    }
+    if (other.rc == null) {
+      return -1;
+    }
+    return rc!.compareTo(other.rc!);
   }
 
   @override
