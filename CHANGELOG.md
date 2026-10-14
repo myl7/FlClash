@@ -1,66 +1,14 @@
 # Changelog
 
+## v0.9.0-myl7.1-rc1 (2026-10-14)
+
+**Features**
+
+- **backup** backups carry the tailscale identity, so restores no longer need a new tailnet login (990f3ac)
+
 ## v0.9.0 (2026-10-14)
 
-**Breaking Changes**
-
-- **views** DNS and NTP override toggles are removed; picked keys apply to every profile (491fae1)
-- **database** Custom overwrites are removed; rebuild them as custom profiles (1677024)
-
-**Features**
-
-- **views** Per-key DNS, NTP, sniffer and TUN settings (491fae1)
-- **profiles** Custom profiles (3abda78)
-- **ui** Stacked sheets, context menus and a sort mode (8c43053)
-- **providers** DNS, Hosts and ports apply without a restart (532ebf0)
-- **android** Launcher shortcuts and one-step on-demand access (d3fa225)
-- **core** Share link import and mrs rule sets (2fa2f7f)
-
-**Bug Fixes**
-
-- **database** Unreadable settings no longer block startup or restores (1677024)
-- **desktop** Windows and Linux desktop fixes (94a25f4)
-- **core,helper** The elevated Core only answers its owner (d780cb8)
-
-## v0.8.99 (2026-10-03)
-
-**Features**
-
-- **editor** Editor word wrap and snippets (e131675)
-- **dashboard** More dashboard cards (e62afb7)
-- **views** Hide timed-out nodes and search every list (8378c70)
-- **ui** Sidebar, floating dock and drag to go back (841d603)
-- **ui** New app glyphs, empty states and theme page (ee6a497)
-- **overwrite** Invalid override warnings and rule presets (46fb7fe)
-- **config** DNS query log and per-key DNS/NTP overrides (a390a42)
-- **core** Proxied service checks and outbound IP risk (8068e68)
-- **platform** Tray hotkeys, node delays and a delay test (1e97716)
-
-**Bug Fixes**
-
-- **core** A changed resource link is now used by the next sync and by auto update (ff23f30)
-- **core** DNS lookups no longer fail on networks that report no DNS servers (e55f6d1)
-- **proxies** Smaller icons in icon-only group headers (786a6ab)
-- **core,android** Push notifications reconnect in Doze (1e9955d)
-- **backup,database** Restores never apply halfway (bee8f24)
-
-## v0.8.98 (2026-09-14)
-
-**Bug Fixes**
-
-- **resources** Refresh the geo file size and time after an update finishes (c5bf5bd)
-- **core** Keep the core running while Windows sleeps with the app suspended (60f371a)
-
-## v0.8.97 (2026-09-10)
-
-**Features**
-
-- **ui** Rework the app UI and refresh the localization (26cfbaf)
-- **app** Rework the app layer and window handling, and add proxy authentication (aaf934c)
-- **desktop** Rework the desktop runners, packaging, and native build (c0fcbc0)
-- **android** Rework the Android VPN service and lifecycle handling (ae29f38)
-- **plugins** Rework the desktop plugins and add the Helper service and Rust bridge (adf715f)
-- **core** Rework the core IPC and process lifecycle (c6eaa0a)
+Internal improvements only.
 
 <!-- changelog:frozen -->
 <!-- Entries below predate the structured pipeline. Their wording is kept as written; only the heading and list style were normalized. -->
