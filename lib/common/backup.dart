@@ -56,6 +56,10 @@ abstract final class BackupEntries {
   static String resolve(String root, String entry) {
     return joinAll([root, ...posix.split(entry)]);
   }
+
+  static String relative(String root, String path) {
+    return posix.joinAll(context.split(context.relative(path, from: root)));
+  }
 }
 
 typedef BackupArchiveRequest = ({
@@ -113,8 +117,31 @@ Future<void> writeBackupArchive({
         await encoder.addFile(file, entry);
       }
     }
+    await _addTailscaleState(encoder, homeDirPath);
   } finally {
     await encoder.close();
+  }
+}
+
+/// No database row names the tailscale identity directory, so it rides along.
+Future<void> _addTailscaleState(
+  ZipFileEncoder encoder,
+  String homeDirPath,
+) async {
+  final directory = Directory(join(homeDirPath, tailscaleDirectoryName));
+  if (!await directory.exists()) {
+    return;
+  }
+  await for (final entity in directory.list(
+    recursive: true,
+    followLinks: false,
+  )) {
+    if (entity is File) {
+      await encoder.addFile(
+        entity,
+        BackupEntries.relative(homeDirPath, entity.path),
+      );
+    }
   }
 }
 

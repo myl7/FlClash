@@ -114,6 +114,21 @@ void main() {
       expect(workDirs(), isEmpty);
     });
 
+    test('restores the tailscale identity a backup carries', () async {
+      final identity = File(join(home.path, 'tailscale', 'tailscaled.state'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('identity');
+      final container = buildContainer();
+      final archivePath = await backupToKept(actionOf(container));
+
+      identity.deleteSync();
+      await actionOf(
+        container,
+      ).restore(RestoreOption.all, (_) async => archivePath);
+
+      expect(identity.readAsStringSync(), 'identity');
+    });
+
     test('removes the work directory when delivery fails', () async {
       final container = buildContainer();
 

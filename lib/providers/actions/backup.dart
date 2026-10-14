@@ -162,7 +162,9 @@ class BackupAction extends _$BackupAction {
     }
 
     try {
-      for (final entry in BackupEntries.ofData(data)) {
+      final entries = <String>[...BackupEntries.ofData(data)];
+      entries.addAll(await _stagedTailscaleEntries(stagingDirPath));
+      for (final entry in entries) {
         final staged = File(BackupEntries.resolve(stagingDirPath, entry));
         if (!await staged.exists()) {
           continue;
@@ -180,6 +182,19 @@ class BackupAction extends _$BackupAction {
       rethrow;
     }
     return putBack;
+  }
+
+  Future<List<String>> _stagedTailscaleEntries(String stagingDirPath) async {
+    final directory = Directory(join(stagingDirPath, tailscaleDirectoryName));
+    if (!await directory.exists()) {
+      return const [];
+    }
+    return directory
+        .list(recursive: true, followLinks: false)
+        .where((entity) => entity is File)
+        .cast<File>()
+        .map((file) => BackupEntries.relative(stagingDirPath, file.path))
+        .toList();
   }
 
   Future<void> _clearReplacedProviderCaches(

@@ -121,6 +121,7 @@ const profilesDirectoryName = 'profiles';
 const providersDirectoryName = 'providers';
 const proxiesProviderDirectoryName = 'proxies';
 const rulesProviderDirectoryName = 'rules';
+const tailscaleDirectoryName = 'tailscale';
 
 const localhost = '127.0.0.1';
 const clashConfigKey = 'clash_config';

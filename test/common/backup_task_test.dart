@@ -583,6 +583,40 @@ void main() {
       });
     });
 
+    test('the archive carries the tailscale state directory', () async {
+      await seedDatabase();
+      writeFile(join(home.path, 'profiles', '1.yaml'), 'proxies: []');
+      writeFile(join(home.path, 'tailscale', 'tailscaled.state'), 'identity');
+      writeFile(join(home.path, 'tailscale', 'logs', 'tail.log'), 'log');
+
+      final archivePath = await backup();
+
+      final names = ZipDecoder()
+          .decodeStream(InputFileStream(archivePath))
+          .files
+          .map((file) => file.name)
+          .toSet();
+      expect(
+        names,
+        containsAll(['tailscale/tailscaled.state', 'tailscale/logs/tail.log']),
+      );
+    });
+
+    test('a restore stages the tailscale state directory', () async {
+      await seedDatabase();
+      writeFile(join(home.path, 'tailscale', 'tailscaled.state'), 'identity');
+      final archivePath = await backup();
+
+      await restore(archivePath);
+
+      expect(
+        File(
+          BackupEntries.resolve(staging.path, 'tailscale/tailscaled.state'),
+        ).readAsStringSync(),
+        'identity',
+      );
+    });
+
     test('restoring returns the rows and stages the files', () async {
       await seedDatabase();
       writeFile(join(home.path, 'profiles', '1.yaml'), 'proxies: []');
