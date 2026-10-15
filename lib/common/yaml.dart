@@ -1,6 +1,8 @@
 import 'package:fl_clash/common/yaml_writer.dart';
 import 'package:yaml/yaml.dart';
 
+export 'package:yaml/yaml.dart' show YamlException;
+
 class Yaml {
   static Yaml? _instance;
 

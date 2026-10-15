@@ -115,17 +115,30 @@ void main() {
     });
 
     test('restores the tailscale identity a backup carries', () async {
-      final identity = File(join(home.path, 'tailscale', 'tailscaled.state'))
+      await testDatabase.profilesDao.putAll([
+        _profile(1, 'Backed up').toCompanion(0),
+      ]);
+      final profileFile = File(await appPath.getProfilePath('1'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync(
+          'proxies:\n'
+          '  - name: TAILNET\n'
+          '    type: tailscale\n'
+          '    state-dir: ./ts-state\n',
+        );
+      final identity = File(join(home.path, 'ts-state', 'tailscaled.state'))
         ..createSync(recursive: true)
         ..writeAsStringSync('identity');
       final container = buildContainer();
       final archivePath = await backupToKept(actionOf(container));
 
+      profileFile.deleteSync();
       identity.deleteSync();
       await actionOf(
         container,
       ).restore(RestoreOption.all, (_) async => archivePath);
 
+      expect(profileFile.readAsStringSync(), contains('state-dir: ./ts-state'));
       expect(identity.readAsStringSync(), 'identity');
     });
 

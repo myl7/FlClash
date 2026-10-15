@@ -117,32 +117,91 @@ Future<void> writeBackupArchive({
         await encoder.addFile(file, entry);
       }
     }
-    await _addTailscaleState(encoder, homeDirPath);
+    for (final dir in await tailscaleStateDirs(
+      homeDirPath,
+      entries.where((entry) => entry.startsWith('$profilesDirectoryName/')),
+    )) {
+      for (final file in await filesUnderEntry(homeDirPath, dir)) {
+        await encoder.addFile(
+          File(BackupEntries.resolve(homeDirPath, file)),
+          file,
+        );
+      }
+    }
   } finally {
     await encoder.close();
   }
 }
 
-/// No database row names the tailscale identity directory, so it rides along.
-Future<void> _addTailscaleState(
-  ZipFileEncoder encoder,
-  String homeDirPath,
+/// The tailscale outbounds of [profileEntries] keep their login state under
+/// `state-dir`, which the Core resolves against the home directory; a missing
+/// key uses its default. The result is home-relative posix directory paths.
+Future<Set<String>> tailscaleStateDirs(
+  String root,
+  Iterable<String> profileEntries,
 ) async {
-  final directory = Directory(join(homeDirPath, tailscaleDirectoryName));
-  if (!await directory.exists()) {
-    return;
+  final dirs = <String>{};
+  for (final entry in profileEntries) {
+    final file = File(BackupEntries.resolve(root, entry));
+    if (!await file.exists()) {
+      continue;
+    }
+    final Object? document;
+    try {
+      document = loadPlainYaml(await file.readAsString());
+    } on YamlException {
+      continue;
+    }
+    final proxies = switch (document) {
+      final Map<String, Object?> map => map['proxies'],
+      _ => null,
+    };
+    if (proxies is! List<Object?>) {
+      continue;
+    }
+    for (final proxy in proxies.whereType<Map<String, Object?>>()) {
+      if (proxy['type'] != 'tailscale') {
+        continue;
+      }
+      final stateDir = proxy['state-dir'];
+      final dir = stateDir is String && stateDir.isNotEmpty
+          ? _normalizeStateDir(stateDir)
+          : tailscaleDirectoryName;
+      if (dir != null) {
+        dirs.add(dir);
+      }
+    }
   }
+  return dirs;
+}
+
+String? _normalizeStateDir(String stateDir) {
+  final normalized = posix.normalize(posix.joinAll(context.split(stateDir)));
+  if (normalized.isEmpty ||
+      normalized == '.' ||
+      posix.isAbsolute(normalized) ||
+      normalized == '..' ||
+      normalized.startsWith('../')) {
+    return null;
+  }
+  return normalized;
+}
+
+Future<List<String>> filesUnderEntry(String root, String dirEntry) async {
+  final directory = Directory(BackupEntries.resolve(root, dirEntry));
+  if (!await directory.exists()) {
+    return const [];
+  }
+  final files = <String>[];
   await for (final entity in directory.list(
     recursive: true,
     followLinks: false,
   )) {
     if (entity is File) {
-      await encoder.addFile(
-        entity,
-        BackupEntries.relative(homeDirPath, entity.path),
-      );
+      files.add(BackupEntries.relative(root, entity.path));
     }
   }
+  return files;
 }
 
 /// Writes nothing outside [stagingDirPath]; the files the result names are left

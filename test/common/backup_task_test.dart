@@ -583,11 +583,17 @@ void main() {
       });
     });
 
-    test('the archive carries the tailscale state directory', () async {
+    test('the archive carries the directory a state-dir names', () async {
       await seedDatabase();
-      writeFile(join(home.path, 'profiles', '1.yaml'), 'proxies: []');
-      writeFile(join(home.path, 'tailscale', 'tailscaled.state'), 'identity');
-      writeFile(join(home.path, 'tailscale', 'logs', 'tail.log'), 'log');
+      writeFile(
+        join(home.path, 'profiles', '1.yaml'),
+        'proxies:\n'
+        '  - name: TAILNET\n'
+        '    type: tailscale\n'
+        '    state-dir: ./ts-state\n',
+      );
+      writeFile(join(home.path, 'ts-state', 'tailscaled.state'), 'identity');
+      writeFile(join(home.path, 'tailscale', 'tailscaled.state'), 'default');
 
       final archivePath = await backup();
 
@@ -596,22 +602,66 @@ void main() {
           .files
           .map((file) => file.name)
           .toSet();
+      expect(names, contains('ts-state/tailscaled.state'));
+      expect(names, isNot(contains('tailscale/tailscaled.state')));
+    });
+
+    test('a tailscale proxy without state-dir uses the Core default', () async {
+      await seedDatabase();
+      writeFile(
+        join(home.path, 'profiles', '1.yaml'),
+        'proxies:\n'
+        '  - name: TAILNET\n'
+        '    type: tailscale\n',
+      );
+      writeFile(join(home.path, 'tailscale', 'tailscaled.state'), 'identity');
+
+      final archivePath = await backup();
+
+      final names = ZipDecoder()
+          .decodeStream(InputFileStream(archivePath))
+          .files
+          .map((file) => file.name)
+          .toSet();
+      expect(names, contains('tailscale/tailscaled.state'));
+    });
+
+    test('a state-dir outside the home directory is ignored', () async {
+      await seedDatabase();
+      writeFile(
+        join(home.path, 'profiles', '1.yaml'),
+        'proxies:\n'
+        '  - name: A\n'
+        '    type: tailscale\n'
+        '    state-dir: /etc/ts\n'
+        '  - name: B\n'
+        '    type: tailscale\n'
+        '    state-dir: ../escape\n',
+      );
+
       expect(
-        names,
-        containsAll(['tailscale/tailscaled.state', 'tailscale/logs/tail.log']),
+        await tailscaleStateDirs(home.path, const ['profiles/1.yaml']),
+        isEmpty,
       );
     });
 
-    test('a restore stages the tailscale state directory', () async {
+    test('a restore stages the state directory the profile names', () async {
       await seedDatabase();
-      writeFile(join(home.path, 'tailscale', 'tailscaled.state'), 'identity');
+      writeFile(
+        join(home.path, 'profiles', '1.yaml'),
+        'proxies:\n'
+        '  - name: TAILNET\n'
+        '    type: tailscale\n'
+        '    state-dir: ./ts-state\n',
+      );
+      writeFile(join(home.path, 'ts-state', 'tailscaled.state'), 'identity');
       final archivePath = await backup();
 
       await restore(archivePath);
 
       expect(
         File(
-          BackupEntries.resolve(staging.path, 'tailscale/tailscaled.state'),
+          BackupEntries.resolve(staging.path, 'ts-state/tailscaled.state'),
         ).readAsStringSync(),
         'identity',
       );
