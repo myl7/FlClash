@@ -470,4 +470,6 @@ jobs:
         with:
           files: ./dist/*
           body_path: './release.md'
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          # releases/latest must see the fork's own releases, so only rc tags
+          # publish as prereleases.
+          prerelease: ${{ contains(github.ref_name, '-rc') }}
