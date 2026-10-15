@@ -545,8 +545,9 @@ paged sheet's own `SheetPagesNavigator`, never past the destination.
 The root navigator is only for what belongs to no single destination:
 
 - dialogs, which `dialogs` in `lib/common/dialog.dart` hosts on the root unless it is given a context, and the notifier;
-- a gate in front of the whole app, such as `requestDisclaimerConsent`;
 - work that starts with no page behind it: a deep link, the tray, a hotkey, the update check.
+
+The disclaimer is an ordinary read-only page reached from the tools page; startup never opens it and no flow asks for disclaimer consent.
 
 Never reach for the root to open a page or sheet from a page, whether through `rootNavigatorKey`,
 `globalState.navigatorKey`, `rootNavigator: true` or `useRootNavigator: true`, and never push a page from the context of
