@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.0-myl7.1-rc3 (2026-10-15)
+
+**Bug Fixes**
+
+- **backup** backups follow the profile's tailscale state-dir instead of assuming the tailscale directory (9ab2901)
+
 ## v0.9.0-myl7.1-rc2 (2026-10-14)
 
 **Features**
