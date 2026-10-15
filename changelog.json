@@ -2,6 +2,24 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.0-myl7.1-rc4",
+      "tag": "v0.9.0-myl7.1-rc4",
+      "date": "2026-10-15",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "52e8f35",
+              "scope": "views",
+              "text": "startup opens straight into the app; the disclaimer stays readable from the tools page"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.0-myl7.1-rc3",
       "tag": "v0.9.0-myl7.1-rc3",
       "date": "2026-10-15",

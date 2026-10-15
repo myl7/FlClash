@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.0-myl7.1-rc4 (2026-10-15)
+
+**Features**
+
+- **views** startup opens straight into the app; the disclaimer stays readable from the tools page (52e8f35)
+
 ## v0.9.0-myl7.1-rc3 (2026-10-15)
 
 **Bug Fixes**
