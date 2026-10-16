@@ -639,10 +639,22 @@ void main() {
         '    state-dir: ../escape\n',
       );
 
-      expect(
-        await tailscaleStateDirs(home.path, const ['profiles/1.yaml']),
-        isEmpty,
+      expect(await stateDirs(home.path, const ['profiles/1.yaml']), isEmpty);
+    });
+
+    test('an easytier proxy with an explicit state-dir is collected', () async {
+      await seedDatabase();
+      writeFile(
+        join(home.path, 'profiles', '1.yaml'),
+        'proxies:\n'
+        '  - name: NET\n'
+        '    type: easytier\n'
+        '    state-dir: ./et-state\n',
       );
+
+      expect(await stateDirs(home.path, const ['profiles/1.yaml']), {
+        'et-state',
+      });
     });
 
     test('a restore stages the state directory the profile names', () async {

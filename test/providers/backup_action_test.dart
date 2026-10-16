@@ -142,6 +142,74 @@ void main() {
       expect(identity.readAsStringSync(), 'identity');
     });
 
+    test('a state dir a surviving profile names rides along', () async {
+      await testDatabase.profilesDao.putAll([
+        _profile(9, 'Surviving').toCompanion(0),
+      ]);
+      File(await appPath.getProfilePath('9'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync(
+          'proxies:\n'
+          '  - name: TAILNET\n'
+          '    type: tailscale\n'
+          '    state-dir: ./ts-state\n',
+        );
+      final staging = Directory.systemTemp.createTempSync('flclash-staging-');
+      addTearDown(() => staging.deleteSync(recursive: true));
+      File(BackupEntries.resolve(staging.path, 'ts-state/tailscaled.state'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('from backup');
+
+      await actionOf(buildContainer()).applyRestore(
+        const MigrationData(),
+        RestoreOption.onlyProfiles,
+        stagingDirPath: staging.path,
+      );
+
+      expect(
+        File(
+          BackupEntries.resolve(
+            (await appPath.homeDirPath),
+            'ts-state/tailscaled.state',
+          ),
+        ).readAsStringSync(),
+        'from backup',
+      );
+    });
+
+    test('a state dir the archive lacks stays as the device has it', () async {
+      await testDatabase.profilesDao.putAll([
+        _profile(9, 'Surviving').toCompanion(0),
+      ]);
+      File(await appPath.getProfilePath('9'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync(
+          'proxies:\n'
+          '  - name: TAILNET\n'
+          '    type: tailscale\n'
+          '    state-dir: ./ts-state\n',
+        );
+      final existing =
+          File(
+              BackupEntries.resolve(
+                await appPath.homeDirPath,
+                'ts-state/keep.state',
+              ),
+            )
+            ..createSync(recursive: true)
+            ..writeAsStringSync('current');
+      final staging = Directory.systemTemp.createTempSync('flclash-staging-');
+      addTearDown(() => staging.deleteSync(recursive: true));
+
+      await actionOf(buildContainer()).applyRestore(
+        const MigrationData(),
+        RestoreOption.onlyProfiles,
+        stagingDirPath: staging.path,
+      );
+
+      expect(existing.readAsStringSync(), 'current');
+    });
+
     test('removes the work directory when delivery fails', () async {
       final container = buildContainer();
 

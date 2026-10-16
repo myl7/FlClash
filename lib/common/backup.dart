@@ -117,7 +117,7 @@ Future<void> writeBackupArchive({
         await encoder.addFile(file, entry);
       }
     }
-    for (final dir in await tailscaleStateDirs(
+    for (final dir in await stateDirs(
       homeDirPath,
       entries.where((entry) => entry.startsWith('$profilesDirectoryName/')),
     )) {
@@ -133,10 +133,8 @@ Future<void> writeBackupArchive({
   }
 }
 
-/// The tailscale outbounds of [profileEntries] keep their login state under
-/// `state-dir`, which the Core resolves against the home directory; a missing
-/// key uses its default. The result is home-relative posix directory paths.
-Future<Set<String>> tailscaleStateDirs(
+/// Easytier and zerotier derive their default, so they must name a state-dir.
+Future<Set<String>> stateDirs(
   String root,
   Iterable<String> profileEntries,
 ) async {
@@ -152,24 +150,32 @@ Future<Set<String>> tailscaleStateDirs(
     } on YamlException {
       continue;
     }
-    final proxies = switch (document) {
-      final Map<String, Object?> map => map['proxies'],
-      _ => null,
-    };
-    if (proxies is! List<Object?>) {
-      continue;
+    dirs.addAll(stateDirsOfDocument(document));
+  }
+  return dirs;
+}
+
+Set<String> stateDirsOfDocument(Object? document) {
+  final proxies = switch (document) {
+    final Map<String, Object?> map => map['proxies'],
+    _ => null,
+  };
+  if (proxies is! List<Object?>) {
+    return const {};
+  }
+  final dirs = <String>{};
+  for (final proxy in proxies.whereType<Map<String, Object?>>()) {
+    final stateDir = proxy['state-dir'];
+    final String? dir;
+    if (stateDir is String && stateDir.isNotEmpty) {
+      dir = _normalizeStateDir(stateDir);
+    } else if (proxy['type'] == 'tailscale') {
+      dir = tailscaleDirectoryName;
+    } else {
+      dir = null;
     }
-    for (final proxy in proxies.whereType<Map<String, Object?>>()) {
-      if (proxy['type'] != 'tailscale') {
-        continue;
-      }
-      final stateDir = proxy['state-dir'];
-      final dir = stateDir is String && stateDir.isNotEmpty
-          ? _normalizeStateDir(stateDir)
-          : tailscaleDirectoryName;
-      if (dir != null) {
-        dirs.add(dir);
-      }
+    if (dir != null) {
+      dirs.add(dir);
     }
   }
   return dirs;

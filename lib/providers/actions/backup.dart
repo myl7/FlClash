@@ -164,13 +164,21 @@ class BackupAction extends _$BackupAction {
     try {
       final declared = BackupEntries.ofData(data);
       final entries = <String>[...declared];
-      for (final dir in await tailscaleStateDirs(
-        stagingDirPath,
-        declared.where((entry) => entry.startsWith('$profilesDirectoryName/')),
-      )) {
+      final profileEntries = declared.where(
+        (entry) => entry.startsWith('$profilesDirectoryName/'),
+      );
+      // A state dir belongs to no particular node: whenever the archive
+      // carries a directory that either side's profiles name, it goes back.
+      final survivingProfileEntries = (await database.profilesDao.query().get())
+          .map((profile) => BackupEntries.profile(profile.id));
+      final dirs = {
+        ...await stateDirs(stagingDirPath, profileEntries),
+        ...await stateDirs(homeDirPath, survivingProfileEntries),
+      };
+      for (final dir in dirs) {
         entries.addAll(await filesUnderEntry(stagingDirPath, dir));
       }
-      for (final entry in entries) {
+      for (final entry in entries.toSet()) {
         final staged = File(BackupEntries.resolve(stagingDirPath, entry));
         if (!await staged.exists()) {
           continue;
