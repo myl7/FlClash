@@ -370,6 +370,16 @@ class AppLocalizations {
     return Intl.message('About', name: 'about', desc: '', args: []);
   }
 
+  /// `Fork maintained by myl7, based on FlClash by chen08209.`
+  String get aboutFork {
+    return Intl.message(
+      'Fork maintained by myl7, based on FlClash by chen08209.',
+      name: 'aboutFork',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `English`
   String get en {
     return Intl.message('English', name: 'en', desc: '', args: []);

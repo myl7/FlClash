@@ -206,6 +206,9 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "about": MessageLookupByLibrary.simpleMessage("About"),
+    "aboutFork": MessageLookupByLibrary.simpleMessage(
+      "Fork maintained by myl7, based on FlClash by chen08209.",
+    ),
     "accessControl": MessageLookupByLibrary.simpleMessage("Access control"),
     "accessControlAllowDesc": MessageLookupByLibrary.simpleMessage(
       "Only selected apps go through the VPN",

@@ -64,6 +64,7 @@ android {
         debug {
             isMinifyEnabled = false
             applicationIdSuffix = ".dev"
+            resValue("string", "app_name", "FlClash-myl7-dev")
         }
 
         release {
@@ -78,6 +79,7 @@ android {
             // sets RC_BUILD so it stays upgradable under the release key.
             if (!hasReleaseSigning || System.getenv("RC_BUILD") == "1") {
                 applicationIdSuffix = ".dev"
+                resValue("string", "app_name", "FlClash-myl7-dev")
             }
 
             proguardFiles(

@@ -85,6 +85,16 @@ class AboutView extends ConsumerWidget {
             },
           ),
           const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              appLocalizations.aboutFork,
+              textAlign: TextAlign.center,
+              style: context.textTheme.bodySmall?.copyWith(
+                color: context.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
           generateSectionV3(
             title: appLocalizations.more,
             items: [
@@ -97,8 +107,8 @@ class AboutView extends ConsumerWidget {
               _buildLinkItem(
                 glyph: AppGlyphs.cpu,
                 title: appLocalizations.core,
-                url: 'https://github.com/chen08209/Clash.Meta/tree/FlClash',
-                label: 'github.com/chen08209/Clash.Meta',
+                url: 'https://github.com/myl7/Clash.Meta/tree/myl7',
+                label: 'github.com/myl7/Clash.Meta',
               ),
               _buildLinkItem(
                 glyph: AppGlyphs.send,
