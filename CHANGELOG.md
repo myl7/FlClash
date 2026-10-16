@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.0-myl7.2-rc1 (2026-10-16)
+
+**Features**
+
+- **views** profiles manage their state_dir from the more menu with import, export and delete actions (96676ad)
+- **backup** restores carry a state directory back when any profile in play declares it, whatever outbound type names it (98657c9)
+
 ## v0.9.0-myl7.1 (2026-10-15)
 
 Internal improvements only.
