@@ -349,6 +349,9 @@ jobs:
           fi
           # Without the secrets the Gradle build falls back to the debug
           # signature and the .dev application id.
+          case "${{ github.ref_name }}" in
+            *-rc*) echo "RC_BUILD=1" >> "$GITHUB_ENV" ;;
+          esac
 
       - name: Setup Go
         uses: actions/setup-go@v5

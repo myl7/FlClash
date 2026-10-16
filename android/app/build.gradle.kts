@@ -73,6 +73,10 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             } else {
                 signingConfig = signingConfigs.getByName("debug")
+            }
+            // An rc build keeps its own data beside the release install; CI
+            // sets RC_BUILD so it stays upgradable under the release key.
+            if (!hasReleaseSigning || System.getenv("RC_BUILD") == "1") {
                 applicationIdSuffix = ".dev"
             }
 
