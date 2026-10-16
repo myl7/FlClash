@@ -2380,6 +2380,151 @@ class AppLocalizations {
     return Intl.message('Disclaimer', name: 'disclaimer', desc: '', args: []);
   }
 
+  /// `Delete state_dir`
+  String get deleteStateDir {
+    return Intl.message(
+      'Delete state_dir',
+      name: 'deleteStateDir',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Export state_dir`
+  String get exportStateDir {
+    return Intl.message(
+      'Export state_dir',
+      name: 'exportStateDir',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import state_dir`
+  String get importStateDir {
+    return Intl.message(
+      'Import state_dir',
+      name: 'importStateDir',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `state_dir`
+  String get stateDir {
+    return Intl.message('state_dir', name: 'stateDir', desc: '', args: []);
+  }
+
+  /// `No state_dir data to export`
+  String get stateDirEmpty {
+    return Intl.message(
+      'No state_dir data to export',
+      name: 'stateDirEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The outbound that uses it will need to sign in again. This cannot be undone.`
+  String get stateDirEraseDesc {
+    return Intl.message(
+      'The outbound that uses it will need to sign in again. This cannot be undone.',
+      name: 'stateDirEraseDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete state_dir data?`
+  String get stateDirEraseTitle {
+    return Intl.message(
+      'Delete state_dir data?',
+      name: 'stateDirEraseTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `state_dir deleted`
+  String get stateDirErased {
+    return Intl.message(
+      'state_dir deleted',
+      name: 'stateDirErased',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `state_dir exported`
+  String get stateDirExported {
+    return Intl.message(
+      'state_dir exported',
+      name: 'stateDirExported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `state_dir imported`
+  String get stateDirImported {
+    return Intl.message(
+      'state_dir imported',
+      name: 'stateDirImported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Not a state_dir export or a backup archive`
+  String get stateDirInvalid {
+    return Intl.message(
+      'Not a state_dir export or a backup archive',
+      name: 'stateDirInvalid',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The archive's state_dir differs from the one this profile declares; the files will land in the declared one.`
+  String get stateDirMismatchDesc {
+    return Intl.message(
+      'The archive\'s state_dir differs from the one this profile declares; the files will land in the declared one.',
+      name: 'stateDirMismatchDesc',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Import onto this profile's state_dir?`
+  String get stateDirMismatchTitle {
+    return Intl.message(
+      'Import onto this profile\'s state_dir?',
+      name: 'stateDirMismatchTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The archive carries no state_dir this profile declares`
+  String get stateDirNoMatch {
+    return Intl.message(
+      'The archive carries no state_dir this profile declares',
+      name: 'stateDirNoMatch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This profile declares no state_dir`
+  String get stateDirNone {
+    return Intl.message(
+      'This profile declares no state_dir',
+      name: 'stateDirNone',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `This statement describes the nature of FlClash ("the Software"), the responsibilities that come with using it, and its privacy practices. Reading the terms below before use is recommended.`
   String get disclaimerDesc {
     return Intl.message(

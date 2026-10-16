@@ -543,6 +543,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "delayTest": MessageLookupByLibrary.simpleMessage("Delay test"),
     "delete": MessageLookupByLibrary.simpleMessage("Delete"),
     "deleteMultipTip": m18,
+    "deleteStateDir": MessageLookupByLibrary.simpleMessage("Delete state_dir"),
     "deleteTip": m19,
     "desc": MessageLookupByLibrary.simpleMessage(
       "A multi-platform proxy client based on ClashMeta, simple and easy to use, open-source and ad-free.",
@@ -726,6 +727,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("Expiration time"),
     "exportFile": MessageLookupByLibrary.simpleMessage("Export file"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("Export logs"),
+    "exportStateDir": MessageLookupByLibrary.simpleMessage("Export state_dir"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("Export successful"),
     "expressiveScheme": MessageLookupByLibrary.simpleMessage("Expressive"),
     "extend": MessageLookupByLibrary.simpleMessage("Extend"),
@@ -866,6 +868,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "importFile": MessageLookupByLibrary.simpleMessage("Import from file"),
     "importFromLink": MessageLookupByLibrary.simpleMessage("Import from link"),
+    "importStateDir": MessageLookupByLibrary.simpleMessage("Import state_dir"),
     "importUrl": MessageLookupByLibrary.simpleMessage("Import from URL"),
     "inbound": MessageLookupByLibrary.simpleMessage("Inbound"),
     "infiniteTime": MessageLookupByLibrary.simpleMessage("Never expires"),
@@ -1652,6 +1655,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "startVpn": MessageLookupByLibrary.simpleMessage("Starting VPN…"),
     "startupAndBackground": MessageLookupByLibrary.simpleMessage(
       "Startup and background",
+    ),
+    "stateDir": MessageLookupByLibrary.simpleMessage("state_dir"),
+    "stateDirEmpty": MessageLookupByLibrary.simpleMessage(
+      "No state_dir data to export",
+    ),
+    "stateDirEraseDesc": MessageLookupByLibrary.simpleMessage(
+      "The outbound that uses it will need to sign in again. This cannot be undone.",
+    ),
+    "stateDirEraseTitle": MessageLookupByLibrary.simpleMessage(
+      "Delete state_dir data?",
+    ),
+    "stateDirErased": MessageLookupByLibrary.simpleMessage("state_dir deleted"),
+    "stateDirExported": MessageLookupByLibrary.simpleMessage(
+      "state_dir exported",
+    ),
+    "stateDirImported": MessageLookupByLibrary.simpleMessage(
+      "state_dir imported",
+    ),
+    "stateDirInvalid": MessageLookupByLibrary.simpleMessage(
+      "Not a state_dir export or a backup archive",
+    ),
+    "stateDirMismatchDesc": MessageLookupByLibrary.simpleMessage(
+      "The archive's state_dir differs from the one this profile declares; the files will land in the declared one.",
+    ),
+    "stateDirMismatchTitle": MessageLookupByLibrary.simpleMessage(
+      "Import onto this profile's state_dir?",
+    ),
+    "stateDirNoMatch": MessageLookupByLibrary.simpleMessage(
+      "The archive carries no state_dir this profile declares",
+    ),
+    "stateDirNone": MessageLookupByLibrary.simpleMessage(
+      "This profile declares no state_dir",
     ),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
     "statusDesc": MessageLookupByLibrary.simpleMessage(

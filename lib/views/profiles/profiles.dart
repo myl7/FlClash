@@ -425,6 +425,152 @@ class ProfileItem extends ConsumerWidget {
     }
   }
 
+  CommonPopupMenuItem _stateDirMenuItem(BuildContext context, WidgetRef ref) {
+    final appLocalizations = context.appLocalizations;
+    final declared =
+        ref.watch(profileStateDirsProvider(profile.id)).value ??
+        const <String>{};
+    return CommonPopupMenuItem(
+      glyph: AppGlyphs.key,
+      label: appLocalizations.stateDir,
+      enabled: declared.isNotEmpty,
+      subItems: declared.isEmpty
+          ? const []
+          : [
+              CommonPopupMenuItem(
+                glyph: AppGlyphs.upload,
+                label: appLocalizations.importStateDir,
+                onPressed: () {
+                  _handleImportStateDir(context, ref);
+                },
+              ),
+              CommonPopupMenuItem(
+                glyph: AppGlyphs.export,
+                label: appLocalizations.exportStateDir,
+                onPressed: () {
+                  _handleExportStateDir(context, ref);
+                },
+              ),
+              CommonPopupMenuItem(
+                danger: true,
+                glyph: AppGlyphs.delete,
+                label: appLocalizations.deleteStateDir,
+                onPressed: () {
+                  _handleEraseStateDir(context, ref);
+                },
+              ),
+            ],
+      onPressed: declared.isEmpty
+          ? () {
+              context.showNotifier(appLocalizations.stateDirNone);
+            }
+          : null,
+    );
+  }
+
+  Future<void> _handleExportStateDir(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final appLocalizations = context.appLocalizations;
+    final bytes = await globalState.safeRun(
+      () => ref.read(stateDirActionProvider.notifier).exportArchive(profile),
+    );
+    if (!context.mounted) return;
+    if (bytes == null) {
+      context.showNotifier(appLocalizations.stateDirEmpty);
+      return;
+    }
+    final saved = await picker.saveFile(
+      '${profile.realLabel}-state-dir.zip',
+      bytes,
+    );
+    if (saved != null && context.mounted) {
+      context.showNotifier(
+        appLocalizations.stateDirExported,
+        level: MessageLevel.success,
+      );
+    }
+  }
+
+  Future<void> _handleImportStateDir(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final appLocalizations = context.appLocalizations;
+    final platformFile = await picker.pickerFile();
+    final path = platformFile?.path;
+    if (path == null) return;
+    final action = ref.read(stateDirActionProvider.notifier);
+    final declared = await action.dirsOf(profile);
+    if (!context.mounted) return;
+    if (declared.isEmpty) {
+      context.showNotifier(appLocalizations.stateDirNone);
+      return;
+    }
+    final archive = await action.inspect(path);
+    if (!context.mounted) return;
+    if (archive == null) {
+      context.showNotifier(appLocalizations.stateDirInvalid);
+      return;
+    }
+    final Map<String, String> mapping;
+    if (archive.isBackup) {
+      mapping = {for (final dir in declared) dir: dir};
+    } else {
+      final matches = archive.dirs.where(declared.contains).toSet();
+      if (matches.isNotEmpty) {
+        mapping = {for (final dir in matches) dir: dir};
+      } else if (archive.dirs.length == 1 && declared.length == 1) {
+        if (!context.mounted) return;
+        final confirmed = await dialogs.showMessage(
+          context: context,
+          title: appLocalizations.stateDirMismatchTitle,
+          message: TextSpan(text: appLocalizations.stateDirMismatchDesc),
+        );
+        if (confirmed != true) return;
+        mapping = {archive.dirs.single: declared.single};
+      } else {
+        if (context.mounted) {
+          context.showNotifier(appLocalizations.stateDirNoMatch);
+        }
+        return;
+      }
+    }
+    final count = await globalState.safeRun(() => action.apply(path, mapping));
+    if (!context.mounted) return;
+    if (count == null || count == 0) {
+      context.showNotifier(appLocalizations.stateDirNoMatch);
+      return;
+    }
+    await action.restartCoreIfNeeded();
+    if (context.mounted) {
+      context.showNotifier(
+        appLocalizations.stateDirImported,
+        level: MessageLevel.success,
+      );
+    }
+  }
+
+  Future<void> _handleEraseStateDir(BuildContext context, WidgetRef ref) async {
+    final appLocalizations = context.appLocalizations;
+    final confirmed = await dialogs.showMessage(
+      context: context,
+      title: appLocalizations.stateDirEraseTitle,
+      message: TextSpan(text: appLocalizations.stateDirEraseDesc),
+    );
+    if (confirmed != true || !context.mounted) return;
+    final action = ref.read(stateDirActionProvider.notifier);
+    await action.erase(profile);
+    await action.restartCoreIfNeeded();
+    if (context.mounted) {
+      context.showNotifier(
+        appLocalizations.stateDirErased,
+        level: MessageLevel.success,
+      );
+    }
+  }
+
   List<CommonPopupMenuItem> _menuItems(BuildContext context, WidgetRef ref) {
     final appLocalizations = context.appLocalizations;
     final isUrl = profile.type == ProfileType.url;
@@ -493,6 +639,7 @@ class ProfileItem extends ConsumerWidget {
                 _handleExportFile(context);
               },
             ),
+            _stateDirMenuItem(context, ref),
           ],
         ),
       CommonPopupMenuItem(

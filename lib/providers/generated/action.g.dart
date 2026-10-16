@@ -142,7 +142,7 @@ final class BackupActionProvider extends $NotifierProvider<BackupAction, void> {
   }
 }
 
-String _$backupActionHash() => r'2c013cbf015e7c6e58bb5e073201c0cf3a82584b';
+String _$backupActionHash() => r'3ce78055649334d50f787ce67c48a6a50ac02ab2';
 
 abstract class _$BackupAction extends $Notifier<void> {
   void build();
@@ -196,6 +196,142 @@ final class CoreActionProvider extends $NotifierProvider<CoreAction, void> {
 String _$coreActionHash() => r'8af16ddd3fd82648d49b6f91d7ec30198f10ddc5';
 
 abstract class _$CoreAction extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// The profile's declared state directories, cached for the profile menu.
+
+@ProviderFor(profileStateDirs)
+final profileStateDirsProvider = ProfileStateDirsFamily._();
+
+/// The profile's declared state directories, cached for the profile menu.
+
+final class ProfileStateDirsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Set<String>>,
+          Set<String>,
+          FutureOr<Set<String>>
+        >
+    with $FutureModifier<Set<String>>, $FutureProvider<Set<String>> {
+  /// The profile's declared state directories, cached for the profile menu.
+  ProfileStateDirsProvider._({
+    required ProfileStateDirsFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'profileStateDirsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$profileStateDirsHash();
+
+  @override
+  String toString() {
+    return r'profileStateDirsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Set<String>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Set<String>> create(Ref ref) {
+    final argument = this.argument as int;
+    return profileStateDirs(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ProfileStateDirsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$profileStateDirsHash() => r'c93f5b9bd3fb2e6acd027ef42b1ccc55a56a5201';
+
+/// The profile's declared state directories, cached for the profile menu.
+
+final class ProfileStateDirsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Set<String>>, int> {
+  ProfileStateDirsFamily._()
+    : super(
+        retry: null,
+        name: r'profileStateDirsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// The profile's declared state directories, cached for the profile menu.
+
+  ProfileStateDirsProvider call(int profileId) =>
+      ProfileStateDirsProvider._(argument: profileId, from: this);
+
+  @override
+  String toString() => r'profileStateDirsProvider';
+}
+
+@ProviderFor(StateDirAction)
+final stateDirActionProvider = StateDirActionProvider._();
+
+final class StateDirActionProvider
+    extends $NotifierProvider<StateDirAction, void> {
+  StateDirActionProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'stateDirActionProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$stateDirActionHash();
+
+  @$internal
+  @override
+  StateDirAction create() => StateDirAction();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
+String _$stateDirActionHash() => r'56ad7bd5bcfd689601a5f212ba5d81c102756362';
+
+abstract class _$StateDirAction extends $Notifier<void> {
   void build();
   @$mustCallSuper
   @override

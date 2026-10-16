@@ -564,6 +564,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "delayTest": MessageLookupByLibrary.simpleMessage("Тест задержки"),
     "delete": MessageLookupByLibrary.simpleMessage("Удалить"),
     "deleteMultipTip": m18,
+    "deleteStateDir": MessageLookupByLibrary.simpleMessage("Удалить state_dir"),
     "deleteTip": m19,
     "desc": MessageLookupByLibrary.simpleMessage(
       "Многоплатформенный прокси-клиент на основе ClashMeta: простой и удобный, с открытым исходным кодом и без рекламы.",
@@ -759,6 +760,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("Срок действия"),
     "exportFile": MessageLookupByLibrary.simpleMessage("Экспорт файла"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("Экспорт логов"),
+    "exportStateDir": MessageLookupByLibrary.simpleMessage(
+      "Экспортировать state_dir",
+    ),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("Экспорт выполнен"),
     "expressiveScheme": MessageLookupByLibrary.simpleMessage("Экспрессивная"),
     "extend": MessageLookupByLibrary.simpleMessage("Расширение"),
@@ -901,6 +905,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "importFile": MessageLookupByLibrary.simpleMessage("Импорт из файла"),
     "importFromLink": MessageLookupByLibrary.simpleMessage("Импорт по ссылке"),
+    "importStateDir": MessageLookupByLibrary.simpleMessage(
+      "Импортировать state_dir",
+    ),
     "importUrl": MessageLookupByLibrary.simpleMessage("Импорт по URL"),
     "inbound": MessageLookupByLibrary.simpleMessage("Входящие"),
     "infiniteTime": MessageLookupByLibrary.simpleMessage("Бессрочно"),
@@ -1729,6 +1736,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "startVpn": MessageLookupByLibrary.simpleMessage("Запуск VPN…"),
     "startupAndBackground": MessageLookupByLibrary.simpleMessage(
       "Запуск и фоновая работа",
+    ),
+    "stateDir": MessageLookupByLibrary.simpleMessage("state_dir"),
+    "stateDirEmpty": MessageLookupByLibrary.simpleMessage(
+      "Нет данных state_dir для экспорта",
+    ),
+    "stateDirEraseDesc": MessageLookupByLibrary.simpleMessage(
+      "Использующему его аутбаунду потребуется повторный вход. Отменить будет нельзя.",
+    ),
+    "stateDirEraseTitle": MessageLookupByLibrary.simpleMessage(
+      "Удалить данные state_dir?",
+    ),
+    "stateDirErased": MessageLookupByLibrary.simpleMessage("state_dir удалён"),
+    "stateDirExported": MessageLookupByLibrary.simpleMessage(
+      "state_dir экспортирован",
+    ),
+    "stateDirImported": MessageLookupByLibrary.simpleMessage(
+      "state_dir импортирован",
+    ),
+    "stateDirInvalid": MessageLookupByLibrary.simpleMessage(
+      "Это не экспорт state_dir и не резервная копия",
+    ),
+    "stateDirMismatchDesc": MessageLookupByLibrary.simpleMessage(
+      "state_dir архива отличается от объявленного этим профилем; файлы попадут в объявленный каталог.",
+    ),
+    "stateDirMismatchTitle": MessageLookupByLibrary.simpleMessage(
+      "Импортировать в state_dir этого профиля?",
+    ),
+    "stateDirNoMatch": MessageLookupByLibrary.simpleMessage(
+      "В архиве нет state_dir, который объявляет этот профиль",
+    ),
+    "stateDirNone": MessageLookupByLibrary.simpleMessage(
+      "Этот профиль не объявляет state_dir",
     ),
     "status": MessageLookupByLibrary.simpleMessage("Статус"),
     "statusDesc": MessageLookupByLibrary.simpleMessage(

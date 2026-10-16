@@ -948,6 +948,7 @@ class CommonPopupMenuItem {
     this.glyph,
     this.onPressed,
     this.danger = false,
+    this.enabled = true,
     this.checked,
     this.subItems = const [],
   });
@@ -955,7 +956,10 @@ class CommonPopupMenuItem {
   final String label;
   final Glyph? glyph;
   final VoidCallback? onPressed;
+
+  /// A disabled row keeps its tap handler, to explain itself, but looks inert.
   final bool danger;
+  final bool enabled;
   final bool? checked;
   final List<CommonPopupMenuItem> subItems;
 }
@@ -1149,7 +1153,7 @@ class _CommonPopupMenuState extends State<CommonPopupMenu>
     Animation<double>? arrowTurns,
   }) {
     final colorScheme = context.colorScheme;
-    final enabled = onTap != null;
+    final enabled = onTap != null && item.enabled;
     final color = item.danger ? colorScheme.error : colorScheme.onSurface;
     final foregroundColor = enabled ? color : color.opacity30;
     Widget? arrow;

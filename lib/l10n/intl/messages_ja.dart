@@ -461,6 +461,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "delayTest": MessageLookupByLibrary.simpleMessage("遅延テスト"),
     "delete": MessageLookupByLibrary.simpleMessage("削除"),
     "deleteMultipTip": m18,
+    "deleteStateDir": MessageLookupByLibrary.simpleMessage("state_dir を削除"),
     "deleteTip": m19,
     "desc": MessageLookupByLibrary.simpleMessage(
       "ClashMetaベースのマルチプラットフォーム対応プロキシクライアント。シンプルで使いやすく、オープンソースで広告もありません。",
@@ -618,6 +619,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("有効期限"),
     "exportFile": MessageLookupByLibrary.simpleMessage("ファイルをエクスポート"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("ログをエクスポート"),
+    "exportStateDir": MessageLookupByLibrary.simpleMessage("state_dir をエクスポート"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("エクスポートが完了しました"),
     "expressiveScheme": MessageLookupByLibrary.simpleMessage("エクスプレッシブ"),
     "extend": MessageLookupByLibrary.simpleMessage("拡張"),
@@ -738,6 +740,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "importFile": MessageLookupByLibrary.simpleMessage("ファイルからインポート"),
     "importFromLink": MessageLookupByLibrary.simpleMessage("リンクからインポート"),
+    "importStateDir": MessageLookupByLibrary.simpleMessage("state_dir をインポート"),
     "importUrl": MessageLookupByLibrary.simpleMessage("URLからインポート"),
     "inbound": MessageLookupByLibrary.simpleMessage("インバウンド"),
     "infiniteTime": MessageLookupByLibrary.simpleMessage("無期限"),
@@ -1418,6 +1421,38 @@ class MessageLookup extends MessageLookupByLibrary {
     "startFromScratch": MessageLookupByLibrary.simpleMessage("最初から作成"),
     "startVpn": MessageLookupByLibrary.simpleMessage("VPNを起動しています…"),
     "startupAndBackground": MessageLookupByLibrary.simpleMessage("起動とバックグラウンド"),
+    "stateDir": MessageLookupByLibrary.simpleMessage("state_dir"),
+    "stateDirEmpty": MessageLookupByLibrary.simpleMessage(
+      "エクスポートできる state_dir データがありません",
+    ),
+    "stateDirEraseDesc": MessageLookupByLibrary.simpleMessage(
+      "これを使用するアウトバウンドは再ログインが必要です。元に戻せません。",
+    ),
+    "stateDirEraseTitle": MessageLookupByLibrary.simpleMessage(
+      "state_dir データを削除しますか？",
+    ),
+    "stateDirErased": MessageLookupByLibrary.simpleMessage("state_dir を削除しました"),
+    "stateDirExported": MessageLookupByLibrary.simpleMessage(
+      "state_dir をエクスポートしました",
+    ),
+    "stateDirImported": MessageLookupByLibrary.simpleMessage(
+      "state_dir をインポートしました",
+    ),
+    "stateDirInvalid": MessageLookupByLibrary.simpleMessage(
+      "state_dir のエクスポートでもバックアップでもありません",
+    ),
+    "stateDirMismatchDesc": MessageLookupByLibrary.simpleMessage(
+      "アーカイブの state_dir はこのプロファイルが宣言するものと異なります。ファイルは宣言されたディレクトリに配置されます。",
+    ),
+    "stateDirMismatchTitle": MessageLookupByLibrary.simpleMessage(
+      "このプロファイルの state_dir にインポートしますか？",
+    ),
+    "stateDirNoMatch": MessageLookupByLibrary.simpleMessage(
+      "アーカイブにこのプロファイルが宣言する state_dir がありません",
+    ),
+    "stateDirNone": MessageLookupByLibrary.simpleMessage(
+      "このプロファイルは state_dir を宣言していません",
+    ),
     "status": MessageLookupByLibrary.simpleMessage("状態"),
     "statusDesc": MessageLookupByLibrary.simpleMessage(
       "DNS を無効にすると、システム DNS を使用します。",

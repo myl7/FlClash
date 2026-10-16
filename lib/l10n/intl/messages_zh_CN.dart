@@ -426,6 +426,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "delayTest": MessageLookupByLibrary.simpleMessage("延迟测试"),
     "delete": MessageLookupByLibrary.simpleMessage("删除"),
     "deleteMultipTip": m18,
+    "deleteStateDir": MessageLookupByLibrary.simpleMessage("删除 state_dir"),
     "deleteTip": m19,
     "desc": MessageLookupByLibrary.simpleMessage(
       "基于ClashMeta的多平台代理客户端，简单易用，开源无广告。",
@@ -567,6 +568,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "expireTime": MessageLookupByLibrary.simpleMessage("到期时间"),
     "exportFile": MessageLookupByLibrary.simpleMessage("导出文件"),
     "exportLogs": MessageLookupByLibrary.simpleMessage("导出日志"),
+    "exportStateDir": MessageLookupByLibrary.simpleMessage("导出 state_dir"),
     "exportSuccess": MessageLookupByLibrary.simpleMessage("导出成功"),
     "expressiveScheme": MessageLookupByLibrary.simpleMessage("表现力"),
     "extend": MessageLookupByLibrary.simpleMessage("扩展"),
@@ -673,6 +675,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "importFile": MessageLookupByLibrary.simpleMessage("通过文件导入"),
     "importFromLink": MessageLookupByLibrary.simpleMessage("从链接导入"),
+    "importStateDir": MessageLookupByLibrary.simpleMessage("导入 state_dir"),
     "importUrl": MessageLookupByLibrary.simpleMessage("通过URL导入"),
     "inbound": MessageLookupByLibrary.simpleMessage("入站"),
     "infiniteTime": MessageLookupByLibrary.simpleMessage("长期有效"),
@@ -1269,6 +1272,32 @@ class MessageLookup extends MessageLookupByLibrary {
     "startFromScratch": MessageLookupByLibrary.simpleMessage("从零开始"),
     "startVpn": MessageLookupByLibrary.simpleMessage("正在启动VPN…"),
     "startupAndBackground": MessageLookupByLibrary.simpleMessage("启动与后台"),
+    "stateDir": MessageLookupByLibrary.simpleMessage("state_dir"),
+    "stateDirEmpty": MessageLookupByLibrary.simpleMessage(
+      "没有可导出的 state_dir 数据",
+    ),
+    "stateDirEraseDesc": MessageLookupByLibrary.simpleMessage(
+      "使用它的出站需要重新登录，且无法撤销。",
+    ),
+    "stateDirEraseTitle": MessageLookupByLibrary.simpleMessage(
+      "删除 state_dir 数据？",
+    ),
+    "stateDirErased": MessageLookupByLibrary.simpleMessage("state_dir 已删除"),
+    "stateDirExported": MessageLookupByLibrary.simpleMessage("state_dir 已导出"),
+    "stateDirImported": MessageLookupByLibrary.simpleMessage("state_dir 已导入"),
+    "stateDirInvalid": MessageLookupByLibrary.simpleMessage(
+      "不是 state_dir 导出包或备份",
+    ),
+    "stateDirMismatchDesc": MessageLookupByLibrary.simpleMessage(
+      "归档里的 state_dir 与此配置声明的不同；文件将导入到声明的目录。",
+    ),
+    "stateDirMismatchTitle": MessageLookupByLibrary.simpleMessage(
+      "导入到此配置的 state_dir？",
+    ),
+    "stateDirNoMatch": MessageLookupByLibrary.simpleMessage(
+      "归档里没有此配置声明的 state_dir",
+    ),
+    "stateDirNone": MessageLookupByLibrary.simpleMessage("此配置未声明 state_dir"),
     "status": MessageLookupByLibrary.simpleMessage("状态"),
     "statusDesc": MessageLookupByLibrary.simpleMessage("关闭 DNS 后将使用系统 DNS。"),
     "stop": MessageLookupByLibrary.simpleMessage("暂停"),
