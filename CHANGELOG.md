@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.0-myl7.2-rc3 (2026-10-16)
+
+**Features**
+
+- **views,android** the app presents itself as FlClash-myl7, with the fork noted in about and the README (034caa9)
+
 ## v0.9.0-myl7.2-rc2 (2026-10-16)
 
 **Features**
