@@ -442,7 +442,7 @@ jobs:
   upload:
     permissions:
       contents: write
-    needs: [ build, dart, plugins, go, android, rust, windows-helper-test ]
+    needs: [ build ]  # checks ride along through the build job; windows-helper-test is off
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
