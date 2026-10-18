@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/icons/icons.dart';
 import 'package:fl_clash/providers/providers.dart';
 import 'package:fl_clash/state.dart';
-import 'package:fl_clash/widgets/list.dart';
-import 'package:fl_clash/widgets/scaffold.dart';
+import 'package:fl_clash/ui/icons/icons.dart';
+import 'package:fl_clash/ui/ui.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -86,16 +85,16 @@ class AboutView extends ConsumerWidget {
           ),
           const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.only(bottom: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Text(
               appLocalizations.aboutFork,
               textAlign: TextAlign.center,
-              style: context.textTheme.bodySmall?.copyWith(
-                color: context.colorScheme.onSurfaceVariant,
-              ),
+              style: AppTextStyle.footnote
+                  .of(context)
+                  .copyWith(color: context.colorScheme.onSurfaceVariant),
             ),
           ),
-          generateSectionV3(
+          generateSection(
             title: appLocalizations.more,
             items: [
               _buildLinkItem(
@@ -118,7 +117,7 @@ class AboutView extends ConsumerWidget {
               ),
             ],
           ),
-          generateSectionV3(
+          generateSection(
             title: appLocalizations.otherContributors,
             items: [
               for (final contributor in _contributors)
@@ -154,7 +153,6 @@ class _AboutHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = context.colorScheme;
-    final textTheme = context.textTheme;
     final appLocalizations = context.appLocalizations;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
@@ -164,7 +162,7 @@ class _AboutHero extends StatelessWidget {
             onEnterDeveloperMode: onEnterDeveloperMode,
             child: DecoratedBox(
               decoration: ShapeDecoration(
-                color: colorScheme.surfaceContainerHigh,
+                color: context.raisedSurfaceLevel.colorOf(colorScheme),
                 shape: AppShape.all(AppCorner.fit(_logoSize)),
               ),
               child: Padding(
@@ -180,9 +178,7 @@ class _AboutHero extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             appName,
-            style: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+            style: AppTextStyle.title2.of(context, emphasized: true),
           ),
           const SizedBox(height: 10),
           Wrap(
@@ -197,7 +193,7 @@ class _AboutHero extends StatelessWidget {
               ),
               _Pill(
                 label: 'GPL-3.0',
-                color: colorScheme.surfaceContainerHighest,
+                color: context.raisedSurfaceLevel.colorOf(colorScheme),
                 foregroundColor: colorScheme.onSurfaceVariant,
               ),
             ],
@@ -208,17 +204,17 @@ class _AboutHero extends StatelessWidget {
             child: Text(
               appLocalizations.desc,
               textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                height: 1.5,
-              ),
+              style: AppTextStyle.subheadline
+                  .of(context)
+                  .copyWith(color: colorScheme.onSurfaceVariant, height: 1.5),
             ),
           ),
           const SizedBox(height: 20),
-          FilledButton.tonalIcon(
+          TonalButton(
+            size: TonalButtonSize.bar,
+            glyph: AppGlyphs.sync,
+            label: appLocalizations.checkUpdate,
             onPressed: isCheckingUpdate ? null : onCheckUpdate,
-            icon: const GlyphIcon(AppGlyphs.sync, fill: 1),
-            label: Text(appLocalizations.checkUpdate),
           ),
         ],
       ),
@@ -245,10 +241,9 @@ class _Pill extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         child: Text(
           label,
-          style: context.textTheme.labelMedium?.copyWith(
-            color: foregroundColor,
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTextStyle.caption1
+              .of(context, emphasized: true)
+              .copyWith(color: foregroundColor),
         ),
       ),
     );
@@ -265,7 +260,7 @@ class _LinkBadge extends StatelessWidget {
     final colorScheme = context.colorScheme;
     return DecoratedBox(
       decoration: ShapeDecoration(
-        color: colorScheme.secondaryContainer,
+        color: context.raisedSurfaceLevel.colorOf(colorScheme),
         shape: AppShape.md,
       ),
       child: SizedBox.square(
@@ -274,7 +269,7 @@ class _LinkBadge extends StatelessWidget {
           child: GlyphIcon(
             glyph,
             size: 20,
-            color: colorScheme.onSecondaryContainer,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
       ),
