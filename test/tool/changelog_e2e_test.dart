@@ -207,4 +207,63 @@ void main() {
 
     expect(warnings.single, contains('not a conventional commit'));
   });
+
+  test('merged-in releases do not repeat commits an older tag published', () {
+    repo = Directory.systemTemp.createTempSync('flclash-changelog-merge-');
+    git(['init', '--quiet', '--initial-branch=main']);
+    git(['config', 'user.email', 'changelog-test@example.com']);
+    git(['config', 'user.name', 'Changelog test']);
+
+    commit('feat: base');
+    git(['tag', 'v1.0.0']);
+
+    commit('feat(a): fork feature');
+    git(['tag', 'v1.0.0-myl7.1']);
+
+    git(['checkout', '--quiet', '-b', 'upstream', 'v1.0.0']);
+    commit('feat(u): upstream feature');
+    git(['tag', 'v1.1.0']);
+
+    git(['checkout', '--quiet', 'main']);
+    git(['merge', '--quiet', '--no-ff', '--no-edit', 'v1.1.0']);
+    commit('feat(b): fork feature after the merge');
+
+    final versions = build(
+      pending: const PendingVersion(
+        version: '1.1.0-myl7.1-rc1',
+        date: '2026-02-03',
+      ),
+    ).changelog.versions;
+
+    List<String> textsOf(String tag) => [
+      for (final version in versions)
+        if (version.tag == tag)
+          for (final group in version.groups)
+            for (final entry in group.entries) entry.text,
+    ];
+
+    expect(versions.map((version) => version.tag), [
+      'v1.1.0-myl7.1-rc1',
+      'v1.1.0',
+      'v1.0.0-myl7.1',
+    ]);
+    expect(textsOf('v1.1.0-myl7.1-rc1'), ['Fork feature after the merge']);
+    expect(textsOf('v1.1.0'), ['Upstream feature']);
+    expect(textsOf('v1.0.0-myl7.1'), ['Fork feature']);
+
+    git(['tag', 'v1.1.0-myl7.1-rc1']);
+    commit('feat(c): later fix');
+    git(['tag', 'v1.1.0-myl7.1']);
+
+    final released = build().changelog.versions;
+    List<String> textsIn(String tag) => [
+      for (final version in released)
+        if (version.tag == tag)
+          for (final group in version.groups)
+            for (final entry in group.entries) entry.text,
+    ];
+
+    expect(textsIn('v1.1.0-myl7.1-rc1'), ['Fork feature after the merge']);
+    expect(textsIn('v1.1.0-myl7.1'), ['Later fix']);
+  });
 }

@@ -64,6 +64,7 @@ class ChangelogBuilder {
       final commits = git.commits(
         from: stable.isEmpty ? boundaryTag?.name : stable.first.name,
         to: 'HEAD',
+        exclude: [for (final tag in stable) tag.name],
       );
       commitIdsByTag[pending.tag] = _idsOf(commits);
       versions.add(
@@ -82,7 +83,16 @@ class ChangelogBuilder {
       final previous = index + 1 < stable.length
           ? stable[index + 1].name
           : boundaryTag?.name;
-      final commits = git.commits(from: previous, to: tag.name);
+      final commits = git.commits(
+        from: previous,
+        to: tag.name,
+        exclude: [
+          // A range reaches across merges; commits an older tag already
+          // released must not repeat in this section.
+          for (var older = index + 1; older < stable.length; older++)
+            stable[older].name,
+        ],
+      );
       commitIdsByTag[tag.name] = _idsOf(commits);
       versions.add(
         ChangelogVersion(

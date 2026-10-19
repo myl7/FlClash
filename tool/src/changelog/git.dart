@@ -164,13 +164,18 @@ class Git {
 
   String head() => _run(['rev-parse', 'HEAD']).trim();
 
-  List<RawCommit> commits({String? from, required String to}) {
+  List<RawCommit> commits({
+    String? from,
+    required String to,
+    List<String> exclude = const [],
+  }) {
     final range = from == null ? to : '$from..$to';
     final output = _run([
       'log',
       '--no-merges',
       '--format=%H$_fieldSeparator%s$_fieldSeparator%b$_recordSeparator',
       range,
+      ...[for (final ref in exclude) '^$ref'],
     ]);
     return output
         .split(_recordSeparator)
