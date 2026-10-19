@@ -2,6 +2,34 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.1-myl7.1-rc1",
+      "tag": "v0.9.1-myl7.1-rc1",
+      "date": "2026-10-19",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "feat",
+          "entries": [
+            {
+              "id": "034caa9",
+              "scope": "views,android",
+              "text": "the app presents itself as FlClash-myl7, with the fork noted in about and the README"
+            },
+            {
+              "id": "96676ad",
+              "scope": "views",
+              "text": "profiles manage their state_dir from the more menu with import, export and delete actions"
+            },
+            {
+              "id": "98657c9",
+              "scope": "backup",
+              "text": "restores carry a state directory back when any profile in play declares it, whatever outbound type names it"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.1",
       "tag": "v0.9.1",
       "date": "2026-10-17",
@@ -94,47 +122,6 @@
               "id": "2201c19",
               "scope": "android",
               "text": "Smoother Android UI while the proxy is busy"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "version": "0.9.0-myl7.2-rc3",
-      "tag": "v0.9.0-myl7.2-rc3",
-      "date": "2026-10-16",
-      "prerelease": false,
-      "groups": [
-        {
-          "type": "feat",
-          "entries": [
-            {
-              "id": "034caa9",
-              "scope": "views,android",
-              "text": "the app presents itself as FlClash-myl7, with the fork noted in about and the README"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "version": "0.9.0-myl7.2-rc2",
-      "tag": "v0.9.0-myl7.2-rc2",
-      "date": "2026-10-16",
-      "prerelease": false,
-      "groups": [
-        {
-          "type": "feat",
-          "entries": [
-            {
-              "id": "96676ad",
-              "scope": "views",
-              "text": "profiles manage their state_dir from the more menu with import, export and delete actions"
-            },
-            {
-              "id": "98657c9",
-              "scope": "backup",
-              "text": "restores carry a state directory back when any profile in play declares it, whatever outbound type names it"
             }
           ]
         }
