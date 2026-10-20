@@ -2,9 +2,9 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.9.1-myl7.1-rc1",
-      "tag": "v0.9.1-myl7.1-rc1",
-      "date": "2026-10-19",
+      "version": "0.9.1-myl7.1",
+      "tag": "v0.9.1-myl7.1",
+      "date": "2026-10-20",
       "prerelease": false,
       "groups": [
         {
