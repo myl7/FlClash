@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.9.3-myl7.1 (2026-11-04)
+
+**Features**
+
+- Upstream v0.9.2 and v0.9.3: the iOS 27 UI on prism_ui, in-app update download and install, connections merged into requests, profile QR codes and phone-to-TV links, colored tray status, higher-contrast dark mode, DNS cache clearing, and optional general overrides (afd4e5e)
+
 ## v0.9.3 (2026-11-04)
 
 **Features**
