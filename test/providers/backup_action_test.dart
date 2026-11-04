@@ -50,8 +50,9 @@ void main() {
     await testDatabase.close();
   });
 
+  // AppStateManager's listen keeps the settings alive while a restore awaits.
   ProviderContainer buildContainer() {
-    final container = ProviderContainer();
+    final container = ProviderContainer()..listen(configProvider, (_, _) {});
     addTearDown(container.dispose);
     return container;
   }
@@ -94,13 +95,13 @@ void main() {
       final profileFile = File(await appPath.getProfilePath('1'))
         ..createSync(recursive: true)
         ..writeAsStringSync('proxies: []');
-      final source = buildContainer()..listen(configProvider, (_, _) {});
+      final source = buildContainer();
       source.read(excludeSSIDsProvider.notifier).value = ['home-wifi'];
       final archivePath = await backupToKept(actionOf(source));
 
       await testDatabase.delete(testDatabase.profiles).go();
       profileFile.deleteSync();
-      final target = buildContainer()..listen(configProvider, (_, _) {});
+      final target = buildContainer();
       final restored = await actionOf(
         target,
       ).restore(RestoreOption.all, (_) async => archivePath);
