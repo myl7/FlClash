@@ -19,16 +19,21 @@ Usage: tool/release.sh <pre|stable> [options]
   stable             Write the changelog, commit it, and tag vX.Y.Z.
 
 Options:
-  --version X.Y.Z    Target app version. Defaults to the pubspec version,
-                     bumping the patch when that version is already tagged.
+  --version X.Y.Z    Target app version, plain or with the fork suffix, as in
+                     0.9.3-myl7.1. Defaults to the pubspec version: when the
+                     plain version is already tagged, the first -myl7.1 fork
+                     release on it is targeted; an already tagged fork version
+                     bumps its fork patch (-myl7.1 -> -myl7.2).
   --push             Push the branch and the tag once the local steps pass.
   --yes              Skip the confirmation prompt.
   --dry-run          Report the plan and exit without changing anything.
   -h, --help         Show this help.
 
 Examples:
-  tool/release.sh pre --push          # v0.8.97-pre.1, notes rendered by CI
-  tool/release.sh stable --push       # v0.8.97 with a chore(release) commit
+  tool/release.sh pre --push          # v0.8.97-pre.1, or v0.9.3-myl7.1-rc.1
+                                      # on a fork version, notes by CI
+  tool/release.sh stable --push       # v0.8.97, or v0.9.3-myl7.1, with a
+                                      # chore(release) commit
 EOF
 }
 
@@ -68,12 +73,12 @@ done
   exit 64
 }
 
-if [[ -n "$want_version" && ! "$want_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  die "--version must look like 0.8.97, got: $want_version"
+if [[ -n "$want_version" && ! "$want_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-myl[0-9]+\.[0-9]+)?$ ]]; then
+  die "--version must look like 0.8.97 or 0.9.3-myl7.1, got: $want_version"
 fi
 
 pubspec_version() {
-  sed -n 's/^version: \([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p' pubspec.yaml
+  sed -nE 's/^version: ([0-9]+\.[0-9]+\.[0-9]+(-myl[0-9]+\.[0-9]+)?).*/\1/p' pubspec.yaml
 }
 
 if ! git diff --quiet || ! git diff --cached --quiet; then
@@ -87,6 +92,11 @@ if [[ "$branch" != "main" ]]; then
   echo "      this publishes '$branch' while main stays behind."
 fi
 
+remote=origin
+if git remote | grep -qx myl; then
+  remote=myl
+fi
+
 current="$(pubspec_version)"
 [[ -n "$current" ]] || die "could not read the version from pubspec.yaml"
 
@@ -94,8 +104,13 @@ bumped=0
 if [[ -n "$want_version" ]]; then
   version="$want_version"
 elif git rev-parse -q --verify "refs/tags/v$current" >/dev/null; then
-  IFS='.' read -r vmaj vmin vpat <<<"$current"
-  version="$vmaj.$vmin.$((vpat + 1))"
+  base="${current%%-*}"
+  if [[ "$current" == *-myl* ]]; then
+    IFS='.' read -r myln mylpatch <<<"${current##*-myl}"
+    version="$base-myl$myln.$((mylpatch + 1))"
+  else
+    version="$base-myl7.1"
+  fi
   echo "pubspec is at $current, which is already tagged; targeting $version"
 else
   version="$current"
@@ -109,9 +124,15 @@ if [[ "$version" != "$current" ]]; then
 fi
 
 if [[ "$mode" == "pre" ]]; then
-  last="$(git tag --list "v$version-pre.*" |
-    sed -n "s/^v$version-pre\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
-  tag="v$version-pre.$(((${last:-0}) + 1))"
+  if [[ "$version" == *-myl* ]]; then
+    last="$(git tag --list "v$version-rc.*" |
+      sed -n "s/^v$version-rc\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
+    tag="v$version-rc.$(((${last:-0} + 1)))"
+  else
+    last="$(git tag --list "v$version-pre.*" |
+      sed -n "s/^v$version-pre\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
+    tag="v$version-pre.$(((${last:-0} + 1)))"
+  fi
 else
   tag="v$version"
 fi
@@ -123,12 +144,16 @@ echo "version   : $current -> $version$([[ $bumped == 1 ]] && echo ' (pubspec wi
 echo "tag       : $tag"
 if [[ "$mode" == "pre" ]]; then
   echo "changelog : rendered by CI from build --unreleased; nothing committed"
-  echo "publishes : build artifacts + Telegram only, no GitHub release"
+  if [[ "$version" == *-myl* ]]; then
+    echo "publishes : GitHub prerelease with artifacts (fork rc tag)"
+  else
+    echo "publishes : build artifacts + Telegram only, no GitHub release"
+  fi
 else
   echo "changelog : CHANGELOG.md + changelog.json regenerated and committed"
   echo "publishes : GitHub release with artifacts, SHA256SUMS, Homebrew cask"
 fi
-echo "push      : $([[ $do_push == 1 ]] && echo yes || echo 'no (printed at the end)')"
+echo "push      : $([[ $do_push == 1 ]] && echo "yes (to $remote)" || echo 'no (printed at the end)')"
 echo
 
 committed=0
@@ -139,7 +164,7 @@ restore() {
 trap restore EXIT
 
 if ((bumped)); then
-  sed -i.bak "s/^version: [0-9]*\.[0-9]*\.[0-9]*/version: $version/" pubspec.yaml
+  sed -i.bak "s/^version: [^+]*/version: $version/" pubspec.yaml
   rm -f pubspec.yaml.bak
 fi
 tool/bump_version.sh minor
@@ -199,11 +224,11 @@ git tag "$tag"
 echo "tagged $tag at $(git rev-parse --short HEAD)"
 
 if ((do_push)); then
-  git push origin "$branch"
-  git push origin "$tag"
-  echo "pushed $branch and $tag"
+  git push "$remote" "$branch"
+  git push "$remote" "$tag"
+  echo "pushed $branch and $tag to $remote"
 else
   echo
   echo "Nothing was pushed. To publish:"
-  echo "  git push origin $branch && git push origin $tag"
+  echo "  git push $remote $branch && git push $remote $tag"
 fi

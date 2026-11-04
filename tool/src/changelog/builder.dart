@@ -175,7 +175,7 @@ Changelog decodeChangelog(String source) =>
 
 String readPubspecVersion(String pubspec) {
   final match = RegExp(
-    r'^version:\s*(\d+\.\d+\.\d+)',
+    r'^version:\s*(\d+\.\d+\.\d+(?:-myl\d+\.\d+)?)',
     multiLine: true,
   ).firstMatch(pubspec);
   if (match == null) {

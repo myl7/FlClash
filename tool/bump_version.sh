@@ -12,6 +12,8 @@ Usage: tool/bump_version.sh [major|minor|all]
 major  Bump app version patch: 0.8.94 -> 0.8.95
 minor  Bump build number: YYYYMMDDNN, NN is today's build count from 01 to 99 (default)
 all    Bump both app version patch and build number
+
+A -mylN.M fork suffix, as in 0.9.3-myl7.1, is kept as it is.
 EOF
 }
 
@@ -20,7 +22,7 @@ if [[ "$mode" != "major" && "$mode" != "minor" && "$mode" != "all" ]]; then
   exit 64
 fi
 
-version_line="$(grep -E '^version: [0-9]+\.[0-9]+\.[0-9]+\+[0-9]{10}$' "$pubspec_file" || true)"
+version_line="$(grep -E '^version: [0-9]+\.[0-9]+\.[0-9]+(-myl[0-9]+\.[0-9]+)?\+[0-9]{10}$' "$pubspec_file" || true)"
 if [[ -z "$version_line" ]]; then
   echo "No valid version line found in $pubspec_file" >&2
   exit 1
@@ -31,9 +33,12 @@ app_version="${version%%+*}"
 build_number="${version##*+}"
 
 if [[ "$mode" == "major" || "$mode" == "all" ]]; then
-  IFS='.' read -r major minor patch <<<"$app_version"
+  base="${app_version%%-*}"
+  suffix=""
+  [[ "$app_version" == *"-"* ]] && suffix="-${app_version#*-}"
+  IFS='.' read -r major minor patch <<<"$base"
   patch=$((patch + 1))
-  app_version="$major.$minor.$patch"
+  app_version="$major.$minor.$patch$suffix"
 fi
 
 if [[ "$mode" == "minor" || "$mode" == "all" ]]; then

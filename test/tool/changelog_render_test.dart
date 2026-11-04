@@ -315,6 +315,15 @@ void main() {
         '0.8.96',
       );
     });
+
+    test('keeps the fork suffix, so the pending tag is the fork one', () {
+      expect(
+        readPubspecVersion(
+          'name: fl_clash\nversion: 0.9.3-myl7.1+2026110401\n',
+        ),
+        '0.9.3-myl7.1',
+      );
+    });
   });
 }
 
