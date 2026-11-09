@@ -4,14 +4,19 @@ import 'models.dart';
 
 final _tagPattern = RegExp(
   r'^v(\d+)\.(\d+)\.(\d+)'
-  r'(?:-pre\.(\d+)|-myl(\d+)\.(\d+)(?:-rc(\d+))?)?$',
+  r'(?:-pre\.(\d+)|-myl7\.(\d+)(?:-(rc|beta|alpha)(\d+)?)?)?$',
 );
 
 const _fieldSeparator = '\u001f';
 const _recordSeparator = '\u001e';
 
 /// A release tag that matches the `vMAJOR.MINOR.PATCH[-pre.N]` contract, or
-/// the fork's `vMAJOR.MINOR.PATCH-myl<N>.<M>[-rc<K>]`.
+/// the fork's `vMAJOR.MINOR.PATCH-myl7.<M>[-<stage><K>]` where the stage is
+/// rc, beta or alpha, written `-<stage>K` without a dot. The suffix is the
+/// fixed identifier myl7 with a release counter - only `<M>` counts up - so
+/// any other mylN form is a foreign tag; the suffix lives in the semver
+/// prerelease slot as a namespace, and only a trailing stage makes the tag
+/// a prerelease of the fork line.
 ///
 /// Every other tag in the repository is ignored on purpose: `backup-pre-squash-*`
 /// and similar bookkeeping tags would otherwise show up in the generated
@@ -24,9 +29,9 @@ class VersionTag implements Comparable<VersionTag> {
     required this.minor,
     required this.patch,
     this.pre,
-    this.myl,
     this.mylPatch,
-    this.rc,
+    this.stage,
+    this.stageNum,
   });
 
   final String name;
@@ -34,10 +39,15 @@ class VersionTag implements Comparable<VersionTag> {
   final int minor;
   final int patch;
   final int? pre;
-  final int? myl;
   final int? mylPatch;
-  final int? rc;
+  final String? stage;
+  final int? stageNum;
 
+  /// Whether the tag is an upstream `-pre.N` prerelease, which never
+  /// partitions history. This is the changelog's partitioning filter, not
+  /// the stable/prerelease classification CI derives from the fork final
+  /// tag form: fork finals and fork staged tags both partition history as
+  /// releases of their own.
   bool get isPrerelease => pre != null;
 
   String get version => name.substring(1);
@@ -53,9 +63,9 @@ class VersionTag implements Comparable<VersionTag> {
       minor: int.parse(match.group(2)!),
       patch: int.parse(match.group(3)!),
       pre: match.group(4) == null ? null : int.parse(match.group(4)!),
-      myl: match.group(5) == null ? null : int.parse(match.group(5)!),
-      mylPatch: match.group(6) == null ? null : int.parse(match.group(6)!),
-      rc: match.group(7) == null ? null : int.parse(match.group(7)!),
+      mylPatch: match.group(5) == null ? null : int.parse(match.group(5)!),
+      stage: match.group(6),
+      stageNum: match.group(7) == null ? null : int.parse(match.group(7)!),
     );
   }
 
@@ -86,33 +96,42 @@ class VersionTag implements Comparable<VersionTag> {
       }
       return 0;
     }
-    if (myl == null && other.myl == null) {
+    if (mylPatch == null && other.mylPatch == null) {
       return 0;
     }
-    if (myl == null) {
+    if (mylPatch == null) {
       return -1;
     }
-    if (other.myl == null) {
+    if (other.mylPatch == null) {
       return 1;
-    }
-    final byMyl = myl!.compareTo(other.myl!);
-    if (byMyl != 0) {
-      return byMyl;
     }
     final byMylPatch = mylPatch!.compareTo(other.mylPatch!);
     if (byMylPatch != 0) {
       return byMylPatch;
     }
-    if (rc == null && other.rc == null) {
+    if (stage == null && other.stage == null) {
       return 0;
     }
-    if (rc == null) {
+    if (stage == null) {
       return 1;
     }
-    if (other.rc == null) {
+    if (other.stage == null) {
       return -1;
     }
-    return rc!.compareTo(other.rc!);
+    final byStage = stage!.compareTo(other.stage!);
+    if (byStage != 0) {
+      return byStage;
+    }
+    if (stageNum == null && other.stageNum == null) {
+      return 0;
+    }
+    if (stageNum == null) {
+      return -1;
+    }
+    if (other.stageNum == null) {
+      return 1;
+    }
+    return stageNum!.compareTo(other.stageNum!);
   }
 
   @override

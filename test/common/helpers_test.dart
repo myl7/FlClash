@@ -133,6 +133,52 @@ void main() {
     test('handles missing minor/patch', () {
       expect(compareVersions('1', '1.0.0'), 0);
     });
+
+    test('orders the fork suffix', () {
+      expect(compareVersions('0.9.3-myl7.2', '0.9.3-myl7.1'), greaterThan(0));
+      expect(compareVersions('0.9.3-myl7.1', '0.9.3-myl7.2'), lessThan(0));
+      expect(compareVersions('0.9.3-myl7.1', '0.9.3-myl7.1'), 0);
+    });
+
+    test('fork line against bare and other cores', () {
+      expect(compareVersions('0.9.3-myl7.1', '0.9.3'), greaterThan(0));
+      expect(compareVersions('0.9.3-myl7.1', '0.9.4-myl7.1'), lessThan(0));
+      expect(compareVersions('0.10.0-myl7.1', '0.9.3-myl7.1'), greaterThan(0));
+    });
+
+    test('final outranks staged, stages order alpha beta rc', () {
+      expect(
+        compareVersions('0.9.3-myl7.2', '0.9.3-myl7.2-rc1'),
+        greaterThan(0),
+      );
+      expect(
+        compareVersions('0.9.3-myl7.2-rc1', '0.9.3-myl7.2-beta1'),
+        greaterThan(0),
+      );
+      expect(
+        compareVersions('0.9.3-myl7.2-beta1', '0.9.3-myl7.2-alpha1'),
+        greaterThan(0),
+      );
+      expect(
+        compareVersions('0.9.3-myl7.2-rc2', '0.9.3-myl7.2-rc1'),
+        greaterThan(0),
+      );
+    });
+
+    test('fork version with build number', () {
+      expect(
+        compareVersions('0.9.3-myl7.2+2026110901', '0.9.3-myl7.1'),
+        greaterThan(0),
+      );
+      expect(
+        compareVersions('0.9.3-myl7.1+2026102001', '0.9.3-myl7.1'),
+        greaterThan(0),
+      );
+    });
+
+    test('outside the grammar compares by string without throwing', () {
+      expect(compareVersions('weird', '0.9.3-myl7.1'), greaterThan(0));
+    });
   });
 
   group('getViewMode', () {

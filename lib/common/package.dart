@@ -12,31 +12,60 @@ extension PackageInfoExtension on PackageInfo {
   ].join(' ');
 }
 
+final _versionPattern = RegExp(
+  r'^(\d+)(?:\.(\d+))?(?:\.(\d+))?'
+  r'(?:-myl7\.(\d+))?'
+  r'(?:-(rc|beta|alpha)(\d+)?)?'
+  r'(?:\+(\d+))?$',
+);
+
+const _stageRank = {'alpha': 0, 'beta': 1, 'rc': 2};
+
+/// Compares app versions in the fork grammar,
+/// `MAJOR.MINOR.PATCH[-myl7.<M>][-<stage><K>][+<build>]`, where myl7 is the
+/// fixed fork identifier (only `<M>` counts up) and the stage is rc, beta or
+/// alpha. Semver core first, then the fork release counter (a version
+/// without it sorts below the fork line, like the changelog tool orders
+/// tags), then the stage, where a final outranks any staged tag and stages
+/// order alpha < beta < rc, then the build number. A value outside the
+/// grammar compares by raw string, so the update check never throws - the
+/// previous splitter crashed with a FormatException on every -myl7.M
+/// version pair that shared its major and minor.
 int compareVersions(String version1, String version2) {
-  final List<String> v1 = version1.split('+')[0].split('.');
-  final List<String> v2 = version2.split('+')[0].split('.');
-  final int major1 = int.parse(v1[0]);
-  final int major2 = int.parse(v2[0]);
-  if (major1 != major2) {
-    return major1.compareTo(major2);
+  final v1 = _versionPattern.firstMatch(version1.trim());
+  final v2 = _versionPattern.firstMatch(version2.trim());
+  if (v1 == null || v2 == null) {
+    return version1.trim().compareTo(version2.trim());
   }
-  final int minor1 = v1.length > 1 ? int.parse(v1[1]) : 0;
-  final int minor2 = v2.length > 1 ? int.parse(v2[1]) : 0;
-  if (minor1 != minor2) {
-    return minor1.compareTo(minor2);
+
+  int zeroWhenAbsent(RegExpMatch m, int group) =>
+      m.group(group) == null ? 0 : int.parse(m.group(group)!);
+  int belowForkLineWhenAbsent(RegExpMatch m, int group) =>
+      m.group(group) == null ? -1 : int.parse(m.group(group)!);
+
+  for (var group = 1; group <= 3; group++) {
+    final result = zeroWhenAbsent(
+      v1,
+      group,
+    ).compareTo(zeroWhenAbsent(v2, group));
+    if (result != 0) return result;
   }
-  final int patch1 = v1.length > 2 ? int.parse(v1[2]) : 0;
-  final int patch2 = v2.length > 2 ? int.parse(v2[2]) : 0;
-  if (patch1 != patch2) {
-    return patch1.compareTo(patch2);
+  final byForkRelease = belowForkLineWhenAbsent(
+    v1,
+    4,
+  ).compareTo(belowForkLineWhenAbsent(v2, 4));
+  if (byForkRelease != 0) return byForkRelease;
+  final stage1 = v1.group(5);
+  final stage2 = v2.group(5);
+  if (stage1 != null || stage2 != null) {
+    if (stage1 == null) return 1;
+    if (stage2 == null) return -1;
+    final result = _stageRank[stage1]!.compareTo(_stageRank[stage2]!);
+    if (result != 0) return result;
   }
-  final int build1 = version1.contains('+')
-      ? int.parse(version1.split('+')[1])
-      : 0;
-  final int build2 = version2.contains('+')
-      ? int.parse(version2.split('+')[1])
-      : 0;
-  return build1.compareTo(build2);
+  final byStageNum = zeroWhenAbsent(v1, 6).compareTo(zeroWhenAbsent(v2, 6));
+  if (byStageNum != 0) return byStageNum;
+  return zeroWhenAbsent(v1, 7).compareTo(zeroWhenAbsent(v2, 7));
 }
 
 const releaseNotesBeginMarker = '<!-- flclash:changelog:begin -->';

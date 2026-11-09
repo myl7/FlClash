@@ -30,7 +30,7 @@ Options:
   -h, --help         Show this help.
 
 Examples:
-  tool/release.sh pre --push          # v0.8.97-pre.1, or v0.9.3-myl7.1-rc.1
+  tool/release.sh pre --push          # v0.8.97-pre.1, or v0.9.3-myl7.1-rc1
                                       # on a fork version, notes by CI
   tool/release.sh stable --push       # v0.8.97, or v0.9.3-myl7.1, with a
                                       # chore(release) commit
@@ -73,12 +73,12 @@ done
   exit 64
 }
 
-if [[ -n "$want_version" && ! "$want_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-myl[0-9]+\.[0-9]+)?$ ]]; then
+if [[ -n "$want_version" && ! "$want_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-myl7\.[0-9]+)?$ ]]; then
   die "--version must look like 0.8.97 or 0.9.3-myl7.1, got: $want_version"
 fi
 
 pubspec_version() {
-  sed -nE 's/^version: ([0-9]+\.[0-9]+\.[0-9]+(-myl[0-9]+\.[0-9]+)?).*/\1/p' pubspec.yaml
+  sed -nE 's/^version: ([0-9]+\.[0-9]+\.[0-9]+(-myl7\.[0-9]+)?).*/\1/p' pubspec.yaml
 }
 
 if ! git diff --quiet || ! git diff --cached --quiet; then
@@ -105,9 +105,9 @@ if [[ -n "$want_version" ]]; then
   version="$want_version"
 elif git rev-parse -q --verify "refs/tags/v$current" >/dev/null; then
   base="${current%%-*}"
-  if [[ "$current" == *-myl* ]]; then
-    IFS='.' read -r myln mylpatch <<<"${current##*-myl}"
-    version="$base-myl$myln.$((mylpatch + 1))"
+  if [[ "$current" == *-myl7.* ]]; then
+    mylpatch="${current##*-myl7.}"
+    version="$base-myl7.$((mylpatch + 1))"
   else
     version="$base-myl7.1"
   fi
@@ -124,10 +124,12 @@ if [[ "$version" != "$current" ]]; then
 fi
 
 if [[ "$mode" == "pre" ]]; then
-  if [[ "$version" == *-myl* ]]; then
-    last="$(git tag --list "v$version-rc.*" |
-      sed -n "s/^v$version-rc\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
-    tag="v$version-rc.$(((${last:-0} + 1)))"
+  if [[ "$version" == "-myl7." ]]; then
+    # The changelog grammar (tool/src/changelog/git.dart) and every existing
+    # tag write the stage without a dot: v0.9.3-myl7.2-rc1, never -rc.1.
+    last="$(git tag --list "v$version-rc*" |
+      sed -n "s/^v$version-rc\([0-9]*\)$/\1/p" | sort -n | tail -1)"
+    tag="v$version-rc$(((${last:-0} + 1)))"
   else
     last="$(git tag --list "v$version-pre.*" |
       sed -n "s/^v$version-pre\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
@@ -144,7 +146,7 @@ echo "version   : $current -> $version$([[ $bumped == 1 ]] && echo ' (pubspec wi
 echo "tag       : $tag"
 if [[ "$mode" == "pre" ]]; then
   echo "changelog : rendered by CI from build --unreleased; nothing committed"
-  if [[ "$version" == *-myl* ]]; then
+  if [[ "$version" == "-myl7." ]]; then
     echo "publishes : GitHub prerelease with artifacts (fork rc tag)"
   else
     echo "publishes : build artifacts + Telegram only, no GitHub release"

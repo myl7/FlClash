@@ -173,9 +173,12 @@ String encodeChangelog(Changelog changelog) =>
 Changelog decodeChangelog(String source) =>
     Changelog.fromJson(jsonDecode(source) as Map<String, dynamic>);
 
+/// The pubspec version with any stage suffix dropped: during an rc cycle the
+/// pubspec sits at the staged form, and the pending section is named after
+/// the final it is heading toward.
 String readPubspecVersion(String pubspec) {
   final match = RegExp(
-    r'^version:\s*(\d+\.\d+\.\d+(?:-myl\d+\.\d+)?)',
+    r'^version:\s*(\d+\.\d+\.\d+(?:-myl7\.\d+)?)',
     multiLine: true,
   ).firstMatch(pubspec);
   if (match == null) {
