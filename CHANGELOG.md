@@ -1,9 +1,10 @@
 # Changelog
 
-## v0.9.3-myl7.2-rc1 (2026-11-09)
+## v0.9.3-myl7.2 (2026-11-09)
 
 **Bug Fixes**
 
+- Judge versions by the fork final form everywhere (a8e34bd)
 - **core** Boot the tailscale engine after the dialer-proxy is installed (717693e)
 - **ci** Mark non-rc tag builds stable so the release banner stays off (caaeda5)
 

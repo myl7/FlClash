@@ -2,14 +2,18 @@
   "schemaVersion": 2,
   "versions": [
     {
-      "version": "0.9.3-myl7.2-rc1",
-      "tag": "v0.9.3-myl7.2-rc1",
+      "version": "0.9.3-myl7.2",
+      "tag": "v0.9.3-myl7.2",
       "date": "2026-11-09",
       "prerelease": false,
       "groups": [
         {
           "type": "fix",
           "entries": [
+            {
+              "id": "a8e34bd",
+              "text": "Judge versions by the fork final form everywhere"
+            },
             {
               "id": "717693e",
               "scope": "core",
