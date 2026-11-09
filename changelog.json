@@ -2,6 +2,29 @@
   "schemaVersion": 2,
   "versions": [
     {
+      "version": "0.9.3-myl7.2-rc1",
+      "tag": "v0.9.3-myl7.2-rc1",
+      "date": "2026-11-09",
+      "prerelease": false,
+      "groups": [
+        {
+          "type": "fix",
+          "entries": [
+            {
+              "id": "717693e",
+              "scope": "core",
+              "text": "Boot the tailscale engine after the dialer-proxy is installed"
+            },
+            {
+              "id": "caaeda5",
+              "scope": "ci",
+              "text": "Mark non-rc tag builds stable so the release banner stays off"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "version": "0.9.3-myl7.1",
       "tag": "v0.9.3-myl7.1",
       "date": "2026-11-04",
