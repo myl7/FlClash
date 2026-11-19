@@ -7,7 +7,9 @@ cd "$root"
 
 mode=""
 want_version=""
+rebuild=0
 do_push=0
+remote=origin
 assume_yes=0
 dry_run=0
 
@@ -15,8 +17,13 @@ usage() {
   cat <<'EOF'
 Usage: tool/release.sh <pre|stable> [options]
 
-  pre                Tag the next vX.Y.Z-pre.N prerelease.
-  stable             Write the changelog, commit it, and tag vX.Y.Z.
+  pre                Tag the next vX.Y.Z-pre.N prerelease on HEAD, no commit.
+                     On a fork version it tags vX.Y.Z-myl7.M-rcN instead.
+  stable             Write the changelog, pause for edits, commit it, and
+                     tag vX.Y.Z or vX.Y.Z-myl7.M.
+
+The fork keeps its own build number in pubspec.yaml; CI still takes the app
+version from the tag.
 
 Options:
   --version X.Y.Z    Target app version, plain or with the fork suffix, as in
@@ -24,16 +31,19 @@ Options:
                      plain version is already tagged, the first -myl7.1 fork
                      release on it is targeted; an already tagged fork version
                      bumps its fork patch (-myl7.1 -> -myl7.2).
+  --rebuild          With pre: rebuild the newest prerelease instead of
+                     starting the next one. Upstream tags gain +M; fork rc
+                     tags gain +M after the rc number.
   --push             Push the branch and the tag once the local steps pass.
-  --yes              Skip the confirmation prompt.
+  --remote NAME      Remote to push to (default origin).
+  --yes              Skip the confirmation prompt and the changelog pause.
   --dry-run          Report the plan and exit without changing anything.
   -h, --help         Show this help.
 
 Examples:
-  tool/release.sh pre --push          # v0.8.97-pre.1, or v0.9.3-myl7.1-rc1
-                                      # on a fork version, notes by CI
-  tool/release.sh stable --push       # v0.8.97, or v0.9.3-myl7.1, with a
-                                      # chore(release) commit
+  tool/release.sh pre --push            # v0.8.97-pre.1, or v0.9.3-myl7.1-rc1
+  tool/release.sh pre --rebuild --push  # v0.8.97-pre.1+1, or -rc1+1
+  tool/release.sh stable --push         # v0.8.97, or v0.9.3-myl7.1
 EOF
 }
 
@@ -53,7 +63,13 @@ while (($#)); do
       want_version="$1"
       ;;
     --version=*) want_version="${1#*=}" ;;
+    --rebuild) rebuild=1 ;;
     --push) do_push=1 ;;
+    --remote)
+      shift || die "--remote needs a value"
+      remote="$1"
+      ;;
+    --remote=*) remote="${1#*=}" ;;
     --yes | -y) assume_yes=1 ;;
     --dry-run) dry_run=1 ;;
     -h | --help)
@@ -92,11 +108,6 @@ if [[ "$branch" != "main" ]]; then
   echo "      this publishes '$branch' while main stays behind."
 fi
 
-remote=origin
-if git remote | grep -qx myl; then
-  remote=myl
-fi
-
 current="$(pubspec_version)"
 [[ -n "$current" ]] || die "could not read the version from pubspec.yaml"
 
@@ -123,30 +134,52 @@ if [[ "$version" != "$current" ]]; then
   bumped=1
 fi
 
-if [[ "$mode" == "pre" ]]; then
-  if [[ "$version" == "-myl7." ]]; then
+if [[ "$mode" != "stable" ]]; then
+  if [[ "$version" == *-myl7.* ]]; then
     # The changelog grammar (tool/src/changelog/git.dart) and every existing
     # tag write the stage without a dot: v0.9.3-myl7.2-rc1, never -rc.1.
     last="$(git tag --list "v$version-rc*" |
-      sed -n "s/^v$version-rc\([0-9]*\)$/\1/p" | sort -n | tail -1)"
-    tag="v$version-rc$(((${last:-0} + 1)))"
+      sed -n "s/^v$version-rc\([0-9]*\)\(+[0-9]*\)\{0,1\}$/\1/p" |
+      sort -n | tail -1)"
+    if ((rebuild)); then
+      [[ -n "$last" ]] || die "no v$version-rcN to rebuild; run without --rebuild first"
+      builds="$(git tag --list "v$version-rc$last+*" |
+        sed -n "s/^v$version-rc$last+\([0-9]*\)$/\1/p" | sort -n | tail -1)"
+      tag="v$version-rc$last+$(((${builds:-0}) + 1))"
+    else
+      tag="v$version-rc$(((${last:-0} + 1)))"
+    fi
   else
     last="$(git tag --list "v$version-pre.*" |
-      sed -n "s/^v$version-pre\.\([0-9]*\)$/\1/p" | sort -n | tail -1)"
-    tag="v$version-pre.$(((${last:-0} + 1)))"
+      sed -n "s/^v$version-pre\.\([0-9]*\)\(+[0-9]*\)\{0,1\}$/\1/p" |
+      sort -n | tail -1)"
+    if ((rebuild)); then
+      [[ -n "$last" ]] || die "no v$version-pre.N to rebuild; run without --rebuild first"
+      builds="$(git tag --list "v$version-pre.$last+*" |
+        sed -n "s/^v$version-pre\.$last+\([0-9]*\)$/\1/p" | sort -n | tail -1)"
+      tag="v$version-pre.$last+$(((${builds:-0}) + 1))"
+    else
+      tag="v$version-pre.$(((${last:-0} + 1)))"
+    fi
   fi
 else
+  ((rebuild == 0)) || die "--rebuild only applies to pre"
   tag="v$version"
+fi
+
+rewritten=""
+if ((bumped)) && [[ "$mode" == "stable" ]]; then
+  rewritten=' (pubspec will be rewritten)'
 fi
 
 echo
 echo "mode      : $mode"
 echo "branch    : $branch"
-echo "version   : $current -> $version$([[ $bumped == 1 ]] && echo ' (pubspec will be rewritten)')"
+echo "version   : $current -> $version$rewritten"
 echo "tag       : $tag"
-if [[ "$mode" == "pre" ]]; then
+if [[ "$mode" != "stable" ]]; then
   echo "changelog : rendered by CI from build --unreleased; nothing committed"
-  if [[ "$version" == "-myl7." ]]; then
+  if [[ "$version" == *-myl7.* ]]; then
     echo "publishes : GitHub prerelease with artifacts (fork rc tag)"
   else
     echo "publishes : build artifacts + Telegram only, no GitHub release"
@@ -207,13 +240,27 @@ fi
 
 if [[ "$mode" == "stable" ]]; then
   dart run tool/changelog.dart release --version "$version"
+  if ((assume_yes == 0)); then
+    echo
+    echo "changelog.json now holds the $tag notes. Edit their wording, merge"
+    echo "entries with \"merges\" or leave commits out with \"omit\" (see"
+    echo ".agents/commands.md), then press Enter; Ctrl-C undoes the release."
+    while true; do
+      read -r <"/dev/tty" || die "no answer read; pass --yes to run unattended"
+      dart run tool/changelog.dart markdown &&
+        dart run tool/changelog.dart verify &&
+        break
+      echo "Fix changelog.json, then press Enter again; Ctrl-C undoes the release."
+    done
+  else
+    dart run tool/changelog.dart verify
+  fi
   echo
   git --no-pager diff --stat -- CHANGELOG.md changelog.json pubspec.yaml
   echo
   git add CHANGELOG.md changelog.json pubspec.yaml
   git commit -m "chore(release): v$version"
   committed=1
-  dart run tool/changelog.dart verify
 elif ! git diff --quiet -- pubspec.yaml; then
   git add pubspec.yaml
   git commit -m "chore: bump version to $(sed -n 's/^version: //p' pubspec.yaml)"

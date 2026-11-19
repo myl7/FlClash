@@ -28,9 +28,8 @@
 
 ## 构建
 
-与上游一致：`flutter pub get` 后 `dart setup.dart android`（见 `.agents/commands.md`）。CI 在每个 tag 上构建。
+与上游一致：`flutter pub get` 后 `dart run tool/package.dart android`（见 `.agents/commands.md`）。CI 在每个 tag 上构建。
 
 ## 许可
 
 同上游，见 [LICENSE](LICENSE)。
-

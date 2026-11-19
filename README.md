@@ -28,7 +28,7 @@ Based on [FlClash](https://github.com/chen08209/FlClash) by chen08209 and the [C
 
 ## Building
 
-Same as upstream: `flutter pub get`, then `dart setup.dart android` (see `.agents/commands.md`). CI builds on every tag.
+Same as upstream: `flutter pub get`, then `dart run tool/package.dart android` (see `.agents/commands.md`). CI builds on every tag.
 
 ## License
 

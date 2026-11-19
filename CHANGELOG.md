@@ -1,5 +1,33 @@
 # Changelog
 
+## v0.9.4 (2026-11-19)
+
+**Features**
+
+- **dashboard** One status button gathers core, update and resource states, with counts, download progress and new card icons (a89b339)
+- **rules** Added rules can go to named custom exits; a profile's script and added rules run together and open from the extend page (c8b34f2)
+- **proxy** PAC mode for the desktop system proxy; new Windows installs bypass <local>; GTK apps on KDE Plasma follow the proxy (7633c3c)
+- **dns** respect-rules, hosts and cache-algorithm in the DNS overrides; macOS system DNS through tun.dns-mode native (ca2693a)
+- **logs** Open a log on a phone to select and copy it (c85bf3a)
+- **resources** Geo resources update automatically by default (1b2ea11)
+- **desktop** Impeller on Windows and Intel Macs; the Apple Silicon download no longer carries Intel code (848583d)
+- Update the core to mihomo v1.19.34, with editor completion for its new keys (e57e5ac)
+
+**Bug Fixes**
+
+- **core** A start that fails or a lost Core says why; a mixed port of 0 is replaced; the mixed port opens without a profile (8298573)
+- **config** Process rules match by default; picked override keys are written as set, empty included (044f5b5)
+- **android** WireGuard, Hysteria2 and TUIC reconnect after a network change; core sockets opened before the VPN are protected (b13cf52)
+- **dashboard** Service and exit IP checks no longer fail while the proxy starts, stops or changes network (408aaa9)
+- **core** HTTPUpgrade share links no longer import as WebSocket (47824d4)
+- **connections** App icons show whenever the app is known and keep their place while loading (5c5964f)
+- **desktop** macOS tray windows stay on the current Space; windows use the target display's scale; AppImage without a bundled libstdc++; cleaner deb removal; the Windows installer only stops its own processes (c620dc9)
+- **ui** Pages open at the top and on the selected profile; sheets open from sheets as pages; the editor shows its spinner and grows its sheet; calmer success and warning colors; remote icons hold their size (b08bcd9)
+
+**Performance**
+
+- **connections** Connections rank and sort off the UI thread; proxy and group icons use less memory (19fb1b0)
+
 ## v0.9.3-myl7.2 (2026-11-09)
 
 **Bug Fixes**
@@ -90,9 +118,11 @@
 
 - **android** Smoother Android UI while the proxy is busy (2201c19)
 
-## v0.9.0-myl7.1 (2026-10-15)
+## v0.9.0-myl7.1-rc3 (2026-10-15)
 
-Internal improvements only.
+**Bug Fixes**
+
+- **backup** backups follow the profile's tailscale state-dir instead of assuming the tailscale directory (9ab2901)
 
 ## v0.9.0-myl7.1-rc4 (2026-10-15)
 
@@ -100,11 +130,9 @@ Internal improvements only.
 
 - **views** startup opens straight into the app; the disclaimer stays readable from the tools page (52e8f35)
 
-## v0.9.0-myl7.1-rc3 (2026-10-15)
+## v0.9.0-myl7.1 (2026-10-15)
 
-**Bug Fixes**
-
-- **backup** backups follow the profile's tailscale state-dir instead of assuming the tailscale directory (9ab2901)
+Internal improvements only.
 
 ## v0.9.0-myl7.1-rc2 (2026-10-14)
 

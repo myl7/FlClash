@@ -5,8 +5,6 @@ import 'package:archive/archive_io.dart';
 import 'package:drift/native.dart';
 import 'package:fl_clash/common/common.dart';
 import 'package:fl_clash/database/database.dart';
-import 'package:fl_clash/enum/enum.dart';
-import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/providers/action.dart';
 import 'package:flutter/widgets.dart' show Locale;
@@ -15,12 +13,8 @@ import 'package:path/path.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-Profile _profile(int id, String label) => Profile(
-  id: id,
-  label: label,
-  autoUpdateDuration: Duration.zero,
-  extendType: ExtendType.standard,
-);
+Profile _profile(int id, String label) =>
+    Profile(id: id, label: label, autoUpdateDuration: Duration.zero);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +24,7 @@ void main() {
 
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({'version': 1});
-    await AppLocalizations.load(const Locale('en'));
+    loadAppLocalizations(const Locale('en'));
     home = Directory.systemTemp.createTempSync('flclash-state-dir-');
     AppPath.supportDirectory = () async => home;
     AppPath.temporaryDirectory = () async => home;
