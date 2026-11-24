@@ -136,66 +136,74 @@ void main() {
     );
   });
 
-  group('a release built by the CI matrix', () {
-    late Directory temp;
-    setUp(() => temp = Directory.systemTemp.createTempSync('release_contract'));
-    tearDown(() => temp.deleteSync(recursive: true));
-
-    test('serves every name it is looked up by', () async {
-      await _writeRelease(temp.path);
-
-      expect(releaseContractFailures(Directory.current.path, temp.path), []);
-    });
-
-    test('names each reader of a missing file', () async {
-      await _writeRelease(temp.path);
-      File(
-        p.join(temp.path, 'FlClash-0.9.5-windows-arm64-setup.exe'),
-      ).deleteSync();
-
-      const missing = 'FlClash-0.9.5-windows-arm64-setup.exe, which is missing';
-      expect(releaseContractFailures(Directory.current.path, temp.path), [
-        '$siteScript looks for $missing',
-        '$releaseNotesTemplate looks for $missing',
-        'in-app updater looks for $missing',
-      ]);
-    });
-
-    test('catches a checksum file that misstates an installer', () async {
-      await _writeRelease(temp.path);
-      final sums = File(p.join(temp.path, 'FlClash-0.9.5-SHA256SUMS'));
-      sums.writeAsStringSync(
-        sums
-            .readAsLinesSync()
-            .map((line) {
-              return line.endsWith('android-arm64.apk')
-                  ? line.replaceRange(0, 64, '0' * 64)
-                  : line;
-            })
-            .join('\n'),
+  group(
+    'a release built by the CI matrix',
+    () {
+      late Directory temp;
+      setUp(
+        () => temp = Directory.systemTemp.createTempSync('release_contract'),
       );
+      tearDown(() => temp.deleteSync(recursive: true));
 
-      const failure =
-          'in-app updater finds no matching sha256 for '
-          'FlClash-0.9.5-android-arm64.apk in FlClash-0.9.5-SHA256SUMS';
-      expect(releaseContractFailures(Directory.current.path, temp.path), [
-        failure,
-      ]);
-    });
+      test('serves every name it is looked up by', () async {
+        await _writeRelease(temp.path);
 
-    test('catches an installer left from an earlier run that neither list '
-        'names', () async {
-      await _writeRelease(temp.path);
-      const stale = 'FlClash-0.9.5-android-arm64.apk';
-      writeManifest(temp.path, [
-        for (final entry in readManifest(temp.path))
-          if (entry.name != stale) entry,
-      ]);
+        expect(releaseContractFailures(Directory.current.path, temp.path), []);
+      });
 
-      expect(File(p.join(temp.path, stale)).existsSync(), isTrue);
-      expect(releaseContractFailures(Directory.current.path, temp.path), [
-        'in-app updater finds no sha256 for $stale in the manifest',
-      ]);
-    });
-  }, skip: 'the fork publishes Android only, so the full-matrix contract does not apply');
+      test('names each reader of a missing file', () async {
+        await _writeRelease(temp.path);
+        File(
+          p.join(temp.path, 'FlClash-0.9.5-windows-arm64-setup.exe'),
+        ).deleteSync();
+
+        const missing =
+            'FlClash-0.9.5-windows-arm64-setup.exe, which is missing';
+        expect(releaseContractFailures(Directory.current.path, temp.path), [
+          '$siteScript looks for $missing',
+          '$releaseNotesTemplate looks for $missing',
+          'in-app updater looks for $missing',
+        ]);
+      });
+
+      test('catches a checksum file that misstates an installer', () async {
+        await _writeRelease(temp.path);
+        final sums = File(p.join(temp.path, 'FlClash-0.9.5-SHA256SUMS'));
+        sums.writeAsStringSync(
+          sums
+              .readAsLinesSync()
+              .map((line) {
+                return line.endsWith('android-arm64.apk')
+                    ? line.replaceRange(0, 64, '0' * 64)
+                    : line;
+              })
+              .join('\n'),
+        );
+
+        const failure =
+            'in-app updater finds no matching sha256 for '
+            'FlClash-0.9.5-android-arm64.apk in FlClash-0.9.5-SHA256SUMS';
+        expect(releaseContractFailures(Directory.current.path, temp.path), [
+          failure,
+        ]);
+      });
+
+      test('catches an installer left from an earlier run that neither list '
+          'names', () async {
+        await _writeRelease(temp.path);
+        const stale = 'FlClash-0.9.5-android-arm64.apk';
+        writeManifest(temp.path, [
+          for (final entry in readManifest(temp.path))
+            if (entry.name != stale) entry,
+        ]);
+
+        expect(File(p.join(temp.path, stale)).existsSync(), isTrue);
+        expect(releaseContractFailures(Directory.current.path, temp.path), [
+          'in-app updater finds no sha256 for $stale in the manifest',
+        ]);
+      });
+    },
+    skip:
+        'the fork publishes Android only, so the full-matrix contract does not apply',
+  );
 }
