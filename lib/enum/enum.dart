@@ -37,6 +37,17 @@ const desktopPlatforms = [
 
 enum GroupName { GLOBAL }
 
+/// Why a dial failed, spelled as the Core sends it. `handshake`: the path to the
+/// target opened but the exchange over it failed.
+enum ConnectionFailureKind {
+  timeout,
+  refused,
+  unreachable,
+  dns,
+  handshake,
+  other,
+}
+
 enum GroupType {
   @JsonValue('select')
   Selector('select'),
@@ -133,8 +144,6 @@ enum RecordFacetKind {
   cache,
   rcode,
 }
-
-enum RecordGrouping { app, host, rule, exit }
 
 extension RecordToneExt on RecordTone {
   Color? accentColor(BuildContext context) {
@@ -470,6 +479,17 @@ enum DashboardWidget {
 }
 
 enum DnsQueryInitiator { app, rule, direct, proxy, other }
+
+enum ConnectionEndReason {
+  local,
+  remote,
+  finished,
+  timeout,
+  reset,
+  core,
+  error,
+  failed,
+}
 
 enum IpType { residential, mobile, business, hosting }
 
@@ -823,6 +843,8 @@ enum RestoreStrategy { compatible, override }
 
 enum TabAnimation { slide, fade }
 
+enum UpdateChannel { stable, pre }
+
 enum LiquidGlassMode { none, standard, ultra }
 
 enum Language { yaml, javaScript, json, ini, xml, text }
@@ -869,8 +891,6 @@ enum MitmInstallOutcome { installed, untilReboot, prompted, saved }
 enum MitmRemoveOutcome { removed, userStore, needsRoot, failed }
 
 enum CoreStatus { connecting, connected, disconnected }
-
-enum RequestFeed { recent, live }
 
 enum UpdatingScope { core, local }
 

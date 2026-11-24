@@ -190,6 +190,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get autoCheckUpdate => 'Rechercher les mises à jour automatiquement';
 
   @override
+  String get updateChannel => 'Canal de mise à jour';
+
+  @override
+  String get updateChannelStable => 'Stable';
+
+  @override
+  String get updateChannelPre => 'Préversion';
+
+  @override
   String get checkCertificate => 'Vérifier les certificats TLS';
 
   @override
@@ -568,6 +577,247 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get liveConnections => 'Connexions en direct';
+
+  @override
+  String get speed => 'Débit';
+
+  @override
+  String get closeActiveConnections => 'Fermer toutes les connexions actives';
+
+  @override
+  String closeActiveConnectionsTip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Fermer les $count connexions actives ? Les applications qui les utilisent se reconnectent d\'elles-mêmes, mais les téléchargements et appels en cours peuvent être coupés.',
+      one:
+          'Fermer la connexion active ? L\'application qui l\'utilise se reconnecte d\'elle-même, mais un téléchargement ou un appel en cours peut être coupé.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get connectionsAll => 'Toutes';
+
+  @override
+  String get connectionsActive => 'Actives';
+
+  @override
+  String get connectionsFailed => 'Échouées';
+
+  @override
+  String get connectionsDecrypted => 'Déchiffrées';
+
+  @override
+  String get connectionRuleGlobal => 'Mode global';
+
+  @override
+  String get connectionRuleNone => 'Aucune règle';
+
+  @override
+  String get failureRefused => 'Refusée';
+
+  @override
+  String get failureUnreachable => 'Injoignable';
+
+  @override
+  String get failureDns => 'Échec DNS';
+
+  @override
+  String get dnsNoSuchDomain => 'Le domaine n’existe pas';
+
+  @override
+  String get dnsServerFailure => 'Échec du serveur amont';
+
+  @override
+  String get dnsRefused => 'Refusée par le serveur amont';
+
+  @override
+  String get dnsTimedOut => 'La requête a expiré';
+
+  @override
+  String get dnsBlockedByRule => 'Bloquée par une règle';
+
+  @override
+  String get failureHandshake => 'Échec de la négociation';
+
+  @override
+  String get failureOther => 'Autre erreur';
+
+  @override
+  String get connectionClosed => 'Fermée';
+
+  @override
+  String get timeline => 'Chronologie';
+
+  @override
+  String get connectionInfo => 'Infos';
+
+  @override
+  String get decryption => 'Déchiffrement';
+
+  @override
+  String connectionRuleIndex(Object number) {
+    return 'nº $number';
+  }
+
+  @override
+  String get handshake => 'Négociation';
+
+  @override
+  String get now => 'Maintenant';
+
+  @override
+  String get mitmCertificateRefused => 'Certificat refusé par le client';
+
+  @override
+  String get connectionEndLocal => 'Fermée localement';
+
+  @override
+  String get connectionEndRemote => 'Fermée par le distant';
+
+  @override
+  String get connectionEndFinished => 'Terminée';
+
+  @override
+  String get connectionEndReset => 'Réinitialisée';
+
+  @override
+  String get connectionEndCore => 'Fermée par le Core';
+
+  @override
+  String get fakeIpMapping => 'Correspondance fake-ip';
+
+  @override
+  String get dnsFromHosts => 'Depuis hosts';
+
+  @override
+  String get condition => 'Condition';
+
+  @override
+  String get addCondition => 'Ajouter une condition';
+
+  @override
+  String get conditionField => 'Champ';
+
+  @override
+  String get conditionContains => 'Contient';
+
+  @override
+  String get conditionEquals => 'Égal à';
+
+  @override
+  String get conditionTip =>
+      'Les conditions d’un même champ en demandent une seule, celles de champs différents toutes. La recherche accepte la même forme, par exemple host:github.com -app:chrome.';
+
+  @override
+  String get conditionNotContains => 'Ne contient pas';
+
+  @override
+  String get conditionNotEquals => 'Différent de';
+
+  @override
+  String get editCondition => 'Modifier la condition';
+
+  @override
+  String conditionValuesIn(String field) {
+    return '$field dans la liste';
+  }
+
+  @override
+  String conditionShows(String count) {
+    return 'Connexions affichées : $count';
+  }
+
+  @override
+  String get conditionRows => 'Une par ligne, toutes les lignes';
+
+  @override
+  String get clearAll => 'Tout effacer';
+
+  @override
+  String get conditionOr => 'ou';
+
+  @override
+  String get selectConnection => 'Sélectionnez une connexion';
+
+  @override
+  String get selectConnectionHint =>
+      'Sa chronologie, ses requêtes HTTP et les détails de la connexion s’affichent ici';
+
+  @override
+  String get selectDnsQuery => 'Sélectionnez une requête DNS';
+
+  @override
+  String get selectDnsQueryHint =>
+      'Ses réponses, son serveur amont et les connexions liées s’affichent ici';
+
+  @override
+  String get relatedConnections => 'Connexions liées';
+
+  @override
+  String get upstream => 'Serveur amont';
+
+  @override
+  String get dnsQueryFields => 'Requête';
+
+  @override
+  String dnsQueryAskedBy(String initiator) {
+    return 'Demandée par $initiator';
+  }
+
+  @override
+  String get dnsConditionTip =>
+      'Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.';
+
+  @override
+  String dnsConditionValuesIn(String field) {
+    return '$field dans la liste';
+  }
+
+  @override
+  String dnsConditionShows(String count) {
+    return 'Requêtes affichées : $count';
+  }
+
+  @override
+  String get connectionPath => 'Chemin';
+
+  @override
+  String get processPath => 'Chemin du processus';
+
+  @override
+  String get proxyNode => 'Nœud';
+
+  @override
+  String get closingTime => 'Fermée à';
+
+  @override
+  String processUid(int uid) {
+    return 'UID $uid';
+  }
+
+  @override
+  String get onlyThisApp => 'Cette app seulement';
+
+  @override
+  String get onlyThisDomain => 'Ce domaine seulement';
+
+  @override
+  String get hideThisHost => 'Masquer cet hôte';
+
+  @override
+  String get copySummary => 'Copier le résumé';
+
+  @override
+  String get copyDomain => 'Copier le domaine';
+
+  @override
+  String get copyAnswers => 'Copier les réponses';
+
+  @override
+  String get viewHttp => 'Voir le HTTP';
 
   @override
   String get inbound => 'Entrant';
@@ -1110,9 +1360,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get filter => 'Filtrer';
-
-  @override
-  String get groupBy => 'Regrouper par';
 
   @override
   String get hideTimeoutProxies => 'Masquer les proxys expirés';
@@ -2405,9 +2652,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pickFromAlbum => 'Choisir dans l’album';
 
   @override
-  String get closeConnections => 'Fermer les connexions';
-
-  @override
   String get scrollToSelected => 'Défiler jusqu’à la sélection';
 
   @override
@@ -3302,8 +3546,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get httpRequests => 'Requêtes HTTP';
 
   @override
+  String httpRequestCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count requêtes HTTP',
+      one: '1 requête HTTP',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String latestHttpRequest(String request) {
+    return 'Dernière : $request';
+  }
+
+  @override
   String get httpRequestsMissing =>
       'Les requêtes envoyées avant l\'activation de la capture, ou déjà effacées, ne sont pas listées.';
+
+  @override
+  String get noHttpRequests => 'Aucune requête pour l’instant';
+
+  @override
+  String get noHttpRequestsHint =>
+      'Cette connexion est déchiffrée, et ses requêtes HTTP s’afficheront ici';
 
   @override
   String get httpRequestCleared =>
@@ -3311,6 +3578,16 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get httpCaptureOff => 'La capture est désactivée';
+
+  @override
+  String get httpCapturing => 'Capture en cours';
+
+  @override
+  String get httpCaptureNeedsDecryption =>
+      'La capture nécessite d’abord le déchiffrement HTTPS et l’installation de son certificat.';
+
+  @override
+  String get goToMitmSettings => 'Ouvrir les réglages MITM';
 
   @override
   String get inProgress => 'En cours';
@@ -3322,7 +3599,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get originalUrl => 'URL d\'origine';
 
   @override
-  String get timeToFirstByte => 'Délai du premier octet';
+  String get httpTiming => 'Temps';
+
+  @override
+  String get httpWaiting => 'Attente de la réponse';
+
+  @override
+  String get httpReceiving => 'Réception';
 
   @override
   String get requestBody => 'Corps de la requête';
@@ -3909,6 +4192,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Impossible de télécharger la mise à jour.';
 
   @override
+  String get updateFileMissing =>
+      'La publication ne contient pas le fichier de mise à jour. Téléchargez-le depuis la page de publication.';
+
+  @override
   String get defaultNameserverDesc =>
       'Résout les noms des autres serveurs DNS. Adresses IP uniquement.';
 
@@ -4003,6 +4290,69 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'Le service VPN n\'a pas pu démarrer.';
+
+  @override
+  String get requestPath => 'Chemin';
+
+  @override
+  String get statusCode => 'Code d’état';
+
+  @override
+  String get contentKind => 'Type';
+
+  @override
+  String get httpRewritten => 'Réécrites';
+
+  @override
+  String get httpAnswerReject => 'Rejetée';
+
+  @override
+  String get httpAnswerRedirect => 'Redirigée';
+
+  @override
+  String get httpAnswerScript => 'Réponse de script';
+
+  @override
+  String get httpBodyText => 'Texte';
+
+  @override
+  String get httpBodyImage => 'Image';
+
+  @override
+  String get regexReplace => 'Remplacement par regex';
+
+  @override
+  String get owningConnection => 'Connexion';
+
+  @override
+  String get selectHttpRequest => 'Sélectionnez une requête';
+
+  @override
+  String get selectHttpRequestHint =>
+      'Sa requête, sa réponse et ses temps s’affichent ici';
+
+  @override
+  String httpConditionShows(String count) {
+    return 'Requêtes affichées : $count';
+  }
+
+  @override
+  String httpConditionValuesIn(String field) {
+    return '$field dans la liste';
+  }
+
+  @override
+  String get httpConditionTip =>
+      'Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.';
+
+  @override
+  String get groupBy => 'Regrouper par';
+
+  @override
+  String get closeConnections => 'Fermer les connexions';
+
+  @override
+  String get timeToFirstByte => 'Délai du premier octet';
 
   @override
   String get serviceCheck => 'Vérifier';

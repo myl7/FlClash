@@ -59,6 +59,9 @@
   "logcat": "Logcat",
   "logcatDesc": "Turning off Logcat hides the logs entry.",
   "autoCheckUpdate": "Auto check for updates",
+  "updateChannel": "Update channel",
+  "updateChannelStable": "Stable",
+  "updateChannelPre": "Prerelease",
   "checkCertificate": "Verify TLS certificates",
   "checkCertificateDesc": "With TLS verification off, subscriptions and backups are open to man-in-the-middle attacks.",
   "accessControl": "Access control",
@@ -174,6 +177,126 @@
   "infiniteTime": "Never expires",
   "connections": "Connections",
   "liveConnections": "Live connections",
+  "speed": "Speed",
+  "closeActiveConnections": "Close all active connections",
+  "closeActiveConnectionsTip": "{count, plural, =1{1 active connection will close.} other{{count} active connections will close.}} Apps using them reconnect on their own, though downloads and calls in progress may drop.",
+  "@closeActiveConnectionsTip": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "connectionsAll": "All",
+  "connectionsActive": "Active",
+  "connectionsFailed": "Failed",
+  "connectionsDecrypted": "Decrypted",
+  "connectionRuleGlobal": "Global mode",
+  "connectionRuleNone": "No rule",
+  "failureRefused": "Refused",
+  "failureUnreachable": "Unreachable",
+  "failureDns": "DNS failed",
+  "dnsNoSuchDomain": "No such domain",
+  "dnsServerFailure": "The upstream failed",
+  "dnsRefused": "Refused by the upstream",
+  "dnsTimedOut": "Query timed out",
+  "dnsBlockedByRule": "Blocked by a rule",
+  "failureHandshake": "Handshake failed",
+  "failureOther": "Other error",
+  "connectionClosed": "Closed",
+  "timeline": "Timeline",
+  "connectionInfo": "Info",
+  "decryption": "Decryption",
+  "connectionRuleIndex": "#{number}",
+  "handshake": "Handshake",
+  "now": "Now",
+  "mitmCertificateRefused": "Certificate refused",
+  "connectionEndLocal": "Closed locally",
+  "connectionEndRemote": "Closed by the remote",
+  "connectionEndFinished": "Finished",
+  "connectionEndReset": "Reset",
+  "connectionEndCore": "Closed by the Core",
+  "fakeIpMapping": "fake-ip mapping",
+  "dnsFromHosts": "From hosts",
+  "condition": "Condition",
+  "addCondition": "Add condition",
+  "conditionField": "Field",
+  "conditionContains": "Contains",
+  "conditionEquals": "Equals",
+  "conditionTip": "Conditions on one field match any of them, on different fields all. Search takes the same form, as in host:github.com -app:chrome.",
+  "conditionNotContains": "Excludes",
+  "conditionNotEquals": "Not equal",
+  "editCondition": "Edit condition",
+  "conditionValuesIn": "{field} in the list",
+  "@conditionValuesIn": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "conditionShows": "Connections shown: {count}",
+  "@conditionShows": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "conditionRows": "Any in a row, every row",
+  "clearAll": "Clear all",
+  "conditionOr": "or",
+  "selectConnection": "Select a connection",
+  "selectConnectionHint": "Its timeline, HTTP requests and connection details appear here",
+  "selectDnsQuery": "Select a query",
+  "selectDnsQueryHint": "Its answers, upstream and related connections appear here",
+  "relatedConnections": "Related connections",
+  "upstream": "Upstream",
+  "dnsQueryFields": "Query",
+  "dnsQueryAskedBy": "Asked by {initiator}",
+  "@dnsQueryAskedBy": {
+    "placeholders": {
+      "initiator": {
+        "type": "String"
+      }
+    }
+  },
+  "dnsConditionTip": "Conditions on one field match any of them, on different fields all.",
+  "dnsConditionValuesIn": "{field} in the list",
+  "@dnsConditionValuesIn": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "dnsConditionShows": "Queries shown: {count}",
+  "@dnsConditionShows": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "connectionPath": "Path",
+  "processPath": "Process path",
+  "proxyNode": "Node",
+  "closingTime": "Closed at",
+  "processUid": "UID {uid}",
+  "@processUid": {
+    "placeholders": {
+      "uid": {
+        "type": "int"
+      }
+    }
+  },
+  "onlyThisApp": "Only this app",
+  "onlyThisDomain": "Only this domain",
+  "hideThisHost": "Hide this host",
+  "copySummary": "Copy summary",
+  "copyDomain": "Copy domain",
+  "copyAnswers": "Copy answers",
+  "viewHttp": "View HTTP",
   "inbound": "Inbound",
   "intranetIP": "Intranet IP",
   "view": "View",
@@ -343,7 +466,6 @@
   "iconStylePlain": "Plain",
   "iconStyleHidden": "Hidden",
   "filter": "Filter",
-  "groupBy": "Group by",
   "hideTimeoutProxies": "Hide timed-out proxies",
   "stackMode": "Stack mode",
   "network": "Network",
@@ -742,7 +864,6 @@
   "exitFullScreen": "Exit full screen",
   "torch": "Flashlight",
   "pickFromAlbum": "Choose from album",
-  "closeConnections": "Close connections",
   "scrollToSelected": "Scroll to selected",
   "showMore": "Expand",
   "showLess": "Collapse",
@@ -1044,13 +1165,36 @@
     }
   },
   "httpRequests": "HTTP requests",
+  "httpRequestCount": "{count, plural, =1{1 HTTP request} other{{count} HTTP requests}}",
+  "@httpRequestCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "latestHttpRequest": "Latest {request}",
+  "@latestHttpRequest": {
+    "placeholders": {
+      "request": {
+        "type": "String"
+      }
+    }
+  },
   "httpRequestsMissing": "Requests made before capture was on, or since cleared, are not listed.",
+  "noHttpRequests": "No requests yet",
+  "noHttpRequestsHint": "This connection is decrypted, and the HTTP requests on it will appear here",
   "httpRequestCleared": "This request is no longer kept",
   "httpCaptureOff": "Capture is off",
+  "httpCapturing": "Capturing",
+  "httpCaptureNeedsDecryption": "Capture needs HTTPS decryption on and its certificate installed first.",
+  "goToMitmSettings": "Go to MITM settings",
   "inProgress": "In progress",
   "method": "Method",
   "originalUrl": "Original URL",
-  "timeToFirstByte": "Time to first byte",
+  "httpTiming": "Timing",
+  "httpWaiting": "Waiting",
+  "httpReceiving": "Receiving",
   "requestBody": "Request body",
   "response": "Response",
   "responseBody": "Response body",
@@ -1215,6 +1359,7 @@
   "updateNotVerified": "The downloaded update could not be verified.",
   "updateRestartTip": "FlClash closes to install the update and opens again when it is done.",
   "updateDownloadFailed": "The update could not be downloaded.",
+  "updateFileMissing": "The update file is not in the release. Download it from the release page.",
   "defaultNameserverDesc": "Resolves the hostnames of the other DNS servers. Use IP addresses only.",
   "nameserverDesc": "The default DNS servers, such as 223.5.5.5, tls://1.1.1.1 or https://dns.google/dns-query.",
   "fallbackDesc": "Used instead of Nameserver when the fallback filter treats its answer as polluted.",
@@ -1253,6 +1398,39 @@
   "forceRestartCore": "Force restart",
   "vpnPermissionNotGranted": "VPN permission was not granted, so the VPN did not start. An always-on VPN set for another app also blocks it.",
   "vpnServiceStartFailed": "The VPN service could not start.",
+  "requestPath": "Path",
+  "statusCode": "Status code",
+  "contentKind": "Type",
+  "httpRewritten": "Rewritten",
+  "httpAnswerReject": "Rejected",
+  "httpAnswerRedirect": "Redirected",
+  "httpAnswerScript": "Script response",
+  "httpBodyText": "Text",
+  "httpBodyImage": "Image",
+  "regexReplace": "Regex replace",
+  "owningConnection": "Connection",
+  "selectHttpRequest": "Select a request",
+  "selectHttpRequestHint": "Its request, response and timing appear here",
+  "httpConditionShows": "Requests shown: {count}",
+  "@httpConditionShows": {
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "httpConditionValuesIn": "{field} in the list",
+  "@httpConditionValuesIn": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "httpConditionTip": "Conditions on one field match any of them, on different fields all.",
+  "groupBy": "Group by",
+  "closeConnections": "Close connections",
+  "timeToFirstByte": "Time to first byte",
   "serviceCheck": "Check",
   "serviceCheckedAt": "Checked at {time}",
   "silentLaunchDesc": "Silent launch starts without showing the window.",

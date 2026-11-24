@@ -799,16 +799,23 @@ over it, as iOS's does, and lets go 0.2 s after the change, as LiquidGlassKit's 
   engine's Gaussian, in device pixels, on a Vogel disc of 16 taps up to a sigma of 2 pixels, 32 up to 3.5 and 64
   past it, so no taps lie further apart than 64 leave them at the widest; rendered at density 2.625 the lens moves by
   at most 12/255 on a few pixels from 64 taps throughout.
+- The shader works a pane's rim out only where it reaches. `liquidGlassInner` gives the rectangle deeper in than the
+  bevel and all the rim draws (the highlight and its tail, the line, the parted colors, the shine's bands), where
+  every one of those sums comes to nothing; a pixel inside it takes its sample, tint, contrast and glow by the same
+  sums and skips the rest, so a frame is what it was, bit for bit. A lens bends to its middle and a shaded end fades
+  without end, so they have no such rectangle, nor has a pane outlined by a path; goo takes its first pill. On a
+  Mi 11 a frame with an alert open takes 17 to 23 of about 375 units less GPU work (busy share times clock), a still
+  page 3 to 4 of about 200, and the slowest tenth of the frames of an alert's entry finish 0.5 to 1.7 ms sooner.
 - Glass builds no pipelines ahead of use. A warm-up that rendered panes offscreen once the first frame landed was
   dropped: after an install, with no pipeline cache on disk, it compiled on the raster thread just as the app was first
   used, to spare the first menu and lens only a few pipelines.
 - A pane is a rounded rectangle, each corner with its own radius, unless a `clipper` gives it a path, as the start
   button's cookie does. The shader reads that path as its reach from the pane's center in 64 directions, so it must
   meet every ray from the center once.
-- Without Impeller's shader filters (Skia, as under plain `flutter test`) a pane frosts from its capture:
-  blur, saturation, brightness, tint, and a rim, with no refraction; the tint is not thickened there, as it is where a
-  pane has no capture, since the capture holds the blur. `flutter test --enable-impeller` runs the shader, so `toImage`
-  shows the real glass.
+- Without Impeller's shader filters (Skia on the Intel macOS build and under plain `flutter test`) a pane frosts from
+  its capture: blur, saturation, brightness, tint, and a rim, with no refraction; the tint is not thickened there, as it
+  is where a pane has no capture, since the capture holds the blur. `flutter test --enable-impeller` runs the shader, so
+  `toImage` shows the real glass.
 - A popup grows out of its anchor on a platter (`AnchoredPopupRoute`). On glass the platter is a `LiquidGlassPane`
   easing from the button's `regular` glass to the thicker `menu` glass, and the menu's cards stand `bare` while it
   shows, opening and returning, so one pane bends the backdrop at a time. The platter takes the `menu` glass's frost
@@ -1067,14 +1074,21 @@ that starts them. A list or map edit page is the exception: its description says
 effect. A section header carries its title, set as iOS 27 sets a grouped list's header in `headline` and the
 footer's `onSurfaceVariant`, and at most a few actions on the group, as `IconButtonData`: `ListHeader` draws them as
 36 dp tonal buttons (`TonalButtonSize.section`), the first two grouped,
-centered on the title. Every header stands as tall as one with a button, 6 dp clear of the group below, so headers
-match whether or not they carry actions. A group with a selection swaps them
-for delete and select all, never a text button. `generateSection` is the only section builder, and a sheet lays its groups inside the 16 dp inset the pages use.
+centered on the title. A header without actions ends its title 6 dp above the group, as iOS does; actions leave the
+title where it stands and grow the header so the buttons keep 6 dp clear of the group. No header gains or loses all its
+actions while shown. A group with a selection swaps them for delete and select all, never a text button.
+`generateSection` is the only section builder. Pages and sheets lay their groups inside `context.listInsets.page()`,
+the width rule of the Inset grouped list section in `.agents/ios-measurements.md`, never a literal margin.
 Every section keeps the same space above it, `ListSectionGap`, title or not, with its title standing in that space, and
 sections are never spaced where they are placed. A page that opens on a section pads its top with `sectionsTopPadding`
 rather than `contentTopPadding`, so that space lands the first title or group where every page, the root tabs
 included, starts its content; an `ErrorBanner`, which can open such a page, keeps the same space above it.
 `generateGroup` gives the rows alone, for a group under a header its caller lays out, such as an `InfoHeader`.
+Such self-drawn sections stand `infoSectionSpacing` apart with their content `infoSectionContentGap` below the header,
+never `listSectionGap`. A row's own padding starts at `listInsets.leading` and ends a trailing glyph at
+`listInsets.trailing` less what its widget leaves beside the glyph (`Checkbox.edgeInset`, `Switch.edgeInset`,
+`IconButton.edgeInsetOf`, `MinIconButtonTheme.edgeInsetOf`, `ListItem.chevronInset`). A grid or card whose height is a
+row's takes it from `listRowExtent`, the rule `ListRow` lays out by.
 
 A row that opens a page, `ListItem.open`, ends in `AppGlyphs.chevronForward` unless it passes its own
 `trailing`, as iOS settings rows do. A row that opens a dialog in place, `ListItem.input`, has no chevron. A setting
@@ -1416,9 +1430,12 @@ other direction.
 
 ### High-Frequency Buffers
 
-`logsProvider`, `requestsProvider`, `dnsQueriesProvider` and `trafficsProvider` hold a `FixedList`
+`logsProvider`, `dnsQueriesProvider` and `trafficsProvider` hold a `FixedList`
 (`lib/common/fixed.dart`), which trades a normal copy-on-write for a shared
-buffer tagged with a generation counter:
+buffer tagged with a generation counter. `requestsProvider` holds a
+`ConnectionLog` (`lib/models/connection_log.dart`), which shares its entries the
+same way: `open`, `close`, `sync` and `updateTraffic` change them in place and
+return a wrapper one `revision` ahead, and the rules below hold for it too.
 
 - `append` mutates the buffer in place and returns a new wrapper one generation
   ahead. That is what providers publish, so `updateShouldNotify` still fires.
@@ -1664,7 +1681,8 @@ that asks the OS for a permission, a global shortcut or a registration, must con
 
 ## Build System
 
-`tool/package.dart` is the release build orchestrator (see Packaging below): it writes `env.json` (`APP_ENV`), runs
+`tool/package.dart` is the release build orchestrator (see Packaging below): it writes `env.json` (`APP_ENV`, and
+`RELEASE_TAG` for a tagged build), runs
 `flutter build`, and leaves the Core artifacts to the build hook.
 
 The desktop Go core and the Rust helper are built by a Dart build hook; Android's Core is built by Gradle (see Android
@@ -1778,14 +1796,15 @@ and step without building, for any platform.
   Linux binary name and window class come from `BINARY_NAME` and `APPLICATION_ID` in `linux/CMakeLists.txt`.
   `windows/packaging/exe/inno_setup.iss` takes `{{NAME}}` placeholders, filled by `innoVariables`, and nothing else.
 - Names come from `releaseAssetName` in `lib/common/release_asset.dart`, which the in-app updater also uses:
-  `FlClash-<line>-<version>-<os>-<arch>[-<form>].<ext>`. The line is `rs` when `build_config.yaml` names
-  `concord_dir` and `dev` when it names `core_dir`, whatever the branch. The version is the `v*` tag on `HEAD` without
-  its `v` and with `+` turned into `.` (GitHub rewrites `+` in asset names), else `<pubspec version>-nightly.<commit
-  date>.<sha7>`. The form is `setup` or `portable` on Windows and absent elsewhere.
-- Each run writes `dist/manifest.json` and `FlClash-<line>-<version>-SHA256SUMS`. The release job merges the
-  per-platform runs with `dart run tool/package.dart merge`, and its release notes, Homebrew cask and F-Droid copy
-  read names from the merged manifest. For the `dev` line it also uploads the Windows installers and APKs under their
-  old names plus a `SHA256SUMS`, which apps released before these names still fetch.
+  `FlClash-<version>-<os>-<arch>[-<form>].<ext>`. The version is the `v*` tag on `HEAD` without its `v` and with `+`
+  turned into `.` (GitHub rewrites `+` in asset names), else `<pubspec version>-nightly.<commit date>.<sha7>`. The
+  version alone tells the lines apart: the line is `rs` when `build_config.yaml` names `concord_dir` and `dev` when it
+  names `core_dir`, whatever the branch, and an rs version starts its prerelease with `rs` (`0.9.5-rs.1`,
+  `0.9.5-rs.nightly.…`). The packager refuses a tag of the other line. The form is `setup` or `portable` on Windows
+  and absent elsewhere.
+- Each run writes `dist/manifest.json` and `FlClash-<version>-SHA256SUMS`. The release job merges the per-platform
+  runs with `dart run tool/package.dart merge`, checks the result with `check` (Release File Names in `commands.md`),
+  and its release notes, Homebrew cask and F-Droid copy read names from the merged manifest.
 - Kept from the fork's patches: package trees normalized to 0755/0644 before `dpkg-deb`, `rpmbuild` and
   `appimagetool` (see Linux Helper below); `dpkg-deb -Zxz`, because the dpkg of UOS and other Debian derivatives
   cannot unpack Ubuntu's default zstd; `StartupWMClass` in every desktop entry; an `AppRun` that passes its arguments
@@ -1945,6 +1964,11 @@ nothing is shown natively).
   deminiaturize brings it back, since the occlusion notification may never come. Windows: the runner forwards the
   top-level window's `WM_SHOWWINDOW` and `WM_SIZE` to the engine for the view, which it counts as hidden only once
   sized to zero; the module consumes a minimize's `WM_SIZE` so the view keeps its size.
+- Focus: while `Window.shown` is false, `HiddenWindowFocusGuard` excludes focus from the whole app. A focus request
+  makes the framework ask the engine to focus its view, and on Windows the engine's `SetFocus` activates the hidden
+  window and takes the foreground from the app in front, which drops an exclusive full-screen game out of full screen.
+  The guard gives back the focus it took once the window shows: the framework's own restore on resume can arrive
+  before the frame that lifts the exclusion and would be refused.
 - Each platform keeps one style record (title bar style everywhere, rounded corners on Windows, effect, tint and
   brightness on Windows and macOS) and reapplies it whole from a single `apply` routine, so DWM margins on Windows and
   `isOpaque`/effect views on macOS have one writer. Add a visual setting to that record, never a second code path.

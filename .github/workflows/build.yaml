@@ -15,7 +15,7 @@ concurrency:
 env:
   # See CI Caches in .agents/commands.md.
   BRANCH_CACHE: ${{ !startsWith(github.ref, 'refs/tags/') }}
-  FLUTTER_VERSION: '3.50.0'
+  FLUTTER_VERSION: '3.50.1'
   GO_VERSION: '1.27.1'
   NDK_VERSION: r28c
 
@@ -554,9 +554,8 @@ jobs:
 
       - name: Patch release.md
         run: |
-          line=$(jq -r '.artifacts[0].line' dist/manifest.json)
           version=$(jq -r '.artifacts[0].version' dist/manifest.json)
-          sed -e "s|TAG|${{ github.ref_name }}|g" -e "s|LINE|$line|g" -e "s|VERSION|$version|g" \
+          sed -e "s|TAG|${{ github.ref_name }}|g" -e "s|VERSION|$version|g" \
             ./.github/release_template.md >> release.md
 
       # Same classification as the build job: only the fork final form
@@ -572,9 +571,11 @@ jobs:
             echo "IS_PRERELEASE=true" >> "$GITHUB_ENV"
           fi
 
-      # Old fork releases named Android assets FlClash-<version>-android-*.apk
-      # and looked their checksum up in SHA256SUMS; keep those names so an
-      # installed v0.9.3-myl7.x can still update in place.
+      # v0.9.3-myl7.x named Android assets FlClash-dev-<version>-* and looked
+      # their checksum up in FlClash-dev-<version>-SHA256SUMS; 0.9.5 names the
+      # files without the line, so publish those copies for an in-place update.
+      # Builds before that named them FlClash-<version>-android-<older arch>
+      # with SHA256SUMS, which the same step keeps working.
       - name: Copy the APKs under the fork's old names
         if: ${{ env.IS_STABLE == 'true' }}
         run: |
@@ -582,11 +583,16 @@ jobs:
           jq -r '.artifacts[]
             | select(.line == "dev")
             | select(.os == "android")
-            | [.name, "FlClash-\(.version)-android-" + {arm64: "arm64-v8a", armv7: "armeabi-v7a", amd64: "x86_64"}[.arch] + ".apk"]
+            | [.name, .version, .arch,
+               {arm64: "arm64-v8a", armv7: "armeabi-v7a", amd64: "x86_64"}[.arch]]
             | @tsv' manifest.json |
-            while IFS=$'\t' read -r name legacy; do
-              cp "$name" "$legacy"
-              sha256sum "./$legacy" >> SHA256SUMS
+            while IFS=$'\t' read -r name version arch legacy_arch; do
+              cp "$name" "FlClash-dev-$version-android-$arch.apk"
+              sha256sum "./FlClash-dev-$version-android-$arch.apk" \
+                >> "FlClash-dev-$version-SHA256SUMS"
+
+              cp "$name" "FlClash-$version-android-$legacy_arch.apk"
+              sha256sum "./FlClash-$version-android-$legacy_arch.apk" >> SHA256SUMS
             done
 
       - name: Release

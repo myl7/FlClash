@@ -189,6 +189,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get autoCheckUpdate => '更新の自動チェック';
 
   @override
+  String get updateChannel => 'アップデートチャンネル';
+
+  @override
+  String get updateChannelStable => '安定版';
+
+  @override
+  String get updateChannelPre => 'プレリリース版';
+
+  @override
   String get checkCertificate => 'TLS証明書を検証';
 
   @override
@@ -543,6 +552,236 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get liveConnections => 'リアルタイム接続';
+
+  @override
+  String get speed => '速度';
+
+  @override
+  String get closeActiveConnections => 'アクティブな接続をすべて閉じる';
+
+  @override
+  String closeActiveConnectionsTip(int count) {
+    return 'アクティブな接続 $count 件をすべて閉じますか？使用中のアプリは自動で再接続しますが、進行中のダウンロードや通話は途切れることがあります。';
+  }
+
+  @override
+  String get connectionsAll => 'すべて';
+
+  @override
+  String get connectionsActive => 'アクティブ';
+
+  @override
+  String get connectionsFailed => '失敗';
+
+  @override
+  String get connectionsDecrypted => '復号済み';
+
+  @override
+  String get connectionRuleGlobal => 'グローバルモード';
+
+  @override
+  String get connectionRuleNone => 'ルールなし';
+
+  @override
+  String get failureRefused => '拒否されました';
+
+  @override
+  String get failureUnreachable => '到達不能';
+
+  @override
+  String get failureDns => 'DNS 解決に失敗';
+
+  @override
+  String get dnsNoSuchDomain => 'ドメインが存在しません';
+
+  @override
+  String get dnsServerFailure => 'アップストリームのエラー';
+
+  @override
+  String get dnsRefused => 'アップストリームが拒否しました';
+
+  @override
+  String get dnsTimedOut => 'クエリがタイムアウトしました';
+
+  @override
+  String get dnsBlockedByRule => 'ルールでブロックされました';
+
+  @override
+  String get failureHandshake => 'ハンドシェイクに失敗';
+
+  @override
+  String get failureOther => 'その他のエラー';
+
+  @override
+  String get connectionClosed => '終了済み';
+
+  @override
+  String get timeline => 'タイムライン';
+
+  @override
+  String get connectionInfo => '情報';
+
+  @override
+  String get decryption => '復号';
+
+  @override
+  String connectionRuleIndex(Object number) {
+    return '$number 番目';
+  }
+
+  @override
+  String get handshake => 'ハンドシェイク';
+
+  @override
+  String get now => '現在';
+
+  @override
+  String get mitmCertificateRefused => 'クライアントが証明書を拒否';
+
+  @override
+  String get connectionEndLocal => 'ローカル側で終了';
+
+  @override
+  String get connectionEndRemote => '相手側で終了';
+
+  @override
+  String get connectionEndFinished => '完了';
+
+  @override
+  String get connectionEndReset => 'リセット';
+
+  @override
+  String get connectionEndCore => 'コアが終了';
+
+  @override
+  String get fakeIpMapping => 'fake-ip マッピング';
+
+  @override
+  String get dnsFromHosts => 'hosts から';
+
+  @override
+  String get condition => '条件';
+
+  @override
+  String get addCondition => '条件を追加';
+
+  @override
+  String get conditionField => 'フィールド';
+
+  @override
+  String get conditionContains => '含む';
+
+  @override
+  String get conditionEquals => '等しい';
+
+  @override
+  String get conditionTip =>
+      '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。検索欄でも同じ書き方が使えます（例：host:github.com -app:chrome）。';
+
+  @override
+  String get conditionNotContains => '含まない';
+
+  @override
+  String get conditionNotEquals => '等しくない';
+
+  @override
+  String get editCondition => '条件を編集';
+
+  @override
+  String conditionValuesIn(String field) {
+    return '現在の接続の$field';
+  }
+
+  @override
+  String conditionShows(String count) {
+    return '$count 件の接続に絞り込みます';
+  }
+
+  @override
+  String get conditionRows => '同じ行はいずれか、各行はすべて一致';
+
+  @override
+  String get clearAll => 'すべてクリア';
+
+  @override
+  String get conditionOr => 'または';
+
+  @override
+  String get selectConnection => '接続を選択';
+
+  @override
+  String get selectConnectionHint => 'タイムライン、HTTP リクエスト、接続情報がここに表示されます';
+
+  @override
+  String get selectDnsQuery => 'クエリを選択';
+
+  @override
+  String get selectDnsQueryHint => '応答、アップストリーム、関連する接続がここに表示されます';
+
+  @override
+  String get relatedConnections => '関連する接続';
+
+  @override
+  String get upstream => 'アップストリーム';
+
+  @override
+  String get dnsQueryFields => 'クエリ';
+
+  @override
+  String dnsQueryAskedBy(String initiator) {
+    return '$initiatorから問い合わせ';
+  }
+
+  @override
+  String get dnsConditionTip => '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。';
+
+  @override
+  String dnsConditionValuesIn(String field) {
+    return '現在のクエリの$field';
+  }
+
+  @override
+  String dnsConditionShows(String count) {
+    return '$count 件のクエリに絞り込みます';
+  }
+
+  @override
+  String get connectionPath => '経路';
+
+  @override
+  String get processPath => 'プロセスのパス';
+
+  @override
+  String get proxyNode => 'ノード';
+
+  @override
+  String get closingTime => '終了時刻';
+
+  @override
+  String processUid(int uid) {
+    return 'UID $uid';
+  }
+
+  @override
+  String get onlyThisApp => 'このアプリのみ表示';
+
+  @override
+  String get onlyThisDomain => 'このドメインのみ表示';
+
+  @override
+  String get hideThisHost => 'このホストを非表示';
+
+  @override
+  String get copySummary => '概要をコピー';
+
+  @override
+  String get copyDomain => 'ドメインをコピー';
+
+  @override
+  String get copyAnswers => '応答をコピー';
+
+  @override
+  String get viewHttp => 'HTTP を表示';
 
   @override
   String get inbound => 'インバウンド';
@@ -1073,9 +1312,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get filter => 'フィルター';
-
-  @override
-  String get groupBy => '分類';
 
   @override
   String get hideTimeoutProxies => 'タイムアウトしたプロキシを隠す';
@@ -2263,9 +2499,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get pickFromAlbum => 'アルバムから選択';
 
   @override
-  String get closeConnections => '接続を閉じる';
-
-  @override
   String get scrollToSelected => '選択項目へスクロール';
 
   @override
@@ -3110,13 +3343,39 @@ class AppLocalizationsJa extends AppLocalizations {
   String get httpRequests => 'HTTP リクエスト';
 
   @override
+  String httpRequestCount(int count) {
+    return 'HTTP リクエスト $count 件';
+  }
+
+  @override
+  String latestHttpRequest(String request) {
+    return '直近 $request';
+  }
+
+  @override
   String get httpRequestsMissing => 'キャプチャをオンにする前のリクエストや、消去済みのリクエストは表示されません。';
+
+  @override
+  String get noHttpRequests => 'リクエストはまだありません';
+
+  @override
+  String get noHttpRequestsHint => 'この接続は復号済みです。その上の HTTP リクエストがここに表示されます';
 
   @override
   String get httpRequestCleared => 'このリクエストの記録は消去されました';
 
   @override
   String get httpCaptureOff => 'キャプチャはオフです';
+
+  @override
+  String get httpCapturing => 'キャプチャ中';
+
+  @override
+  String get httpCaptureNeedsDecryption =>
+      'キャプチャするには、先に HTTPS 復号をオンにして証明書をインストールしてください。';
+
+  @override
+  String get goToMitmSettings => 'MITM 設定へ';
 
   @override
   String get inProgress => '進行中';
@@ -3128,7 +3387,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get originalUrl => '元の URL';
 
   @override
-  String get timeToFirstByte => '最初のバイトまでの時間';
+  String get httpTiming => '所要時間';
+
+  @override
+  String get httpWaiting => '応答待ち';
+
+  @override
+  String get httpReceiving => '受信';
 
   @override
   String get requestBody => 'リクエストボディ';
@@ -3686,6 +3951,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get updateDownloadFailed => '更新をダウンロードできませんでした。';
 
   @override
+  String get updateFileMissing => 'リリースに更新ファイルがありません。リリースページから手動でダウンロードしてください。';
+
+  @override
   String get defaultNameserverDesc =>
       'ほかの DNS サーバーのドメイン名を解決します。IP アドレスのみ指定できます。';
 
@@ -3777,6 +4045,67 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get vpnServiceStartFailed => 'VPN サービスを起動できませんでした。';
+
+  @override
+  String get requestPath => 'パス';
+
+  @override
+  String get statusCode => 'ステータスコード';
+
+  @override
+  String get contentKind => '種類';
+
+  @override
+  String get httpRewritten => '書き換え済み';
+
+  @override
+  String get httpAnswerReject => '拒否';
+
+  @override
+  String get httpAnswerRedirect => 'リダイレクト';
+
+  @override
+  String get httpAnswerScript => 'スクリプト応答';
+
+  @override
+  String get httpBodyText => 'テキスト';
+
+  @override
+  String get httpBodyImage => '画像';
+
+  @override
+  String get regexReplace => '正規表現で置換';
+
+  @override
+  String get owningConnection => '所属する接続';
+
+  @override
+  String get selectHttpRequest => 'リクエストを選択';
+
+  @override
+  String get selectHttpRequestHint => 'リクエスト、レスポンス、所要時間がここに表示されます';
+
+  @override
+  String httpConditionShows(String count) {
+    return '$count 件のリクエストに絞り込みます';
+  }
+
+  @override
+  String httpConditionValuesIn(String field) {
+    return '現在のリクエストの$field';
+  }
+
+  @override
+  String get httpConditionTip => '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。';
+
+  @override
+  String get groupBy => '分類';
+
+  @override
+  String get closeConnections => '接続を閉じる';
+
+  @override
+  String get timeToFirstByte => '最初のバイトまでの時間';
 
   @override
   String get serviceCheck => '検査';

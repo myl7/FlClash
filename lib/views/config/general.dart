@@ -16,23 +16,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'general/overrides.dart';
 part 'general/port_form.dart';
 
-class LogLevelItem extends ConsumerWidget {
-  const LogLevelItem({super.key});
-
-  @override
-  Widget build(BuildContext context, ref) {
-    return ConfigOptionsItem<LogLevel>(
-      title: (l) => l.logLevel,
-      options: LogLevel.values,
-      textBuilder: (logLevel) => logLevel.name,
-      selector: patchClashConfigProvider.select((state) => state.logLevel),
-      onChanged: (ref, value) => ref
-          .read(patchClashConfigProvider.notifier)
-          .update((state) => state.copyWith(logLevel: value)),
-    );
-  }
-}
-
 class UaItem extends ConsumerWidget {
   const UaItem({super.key});
 
@@ -365,6 +348,15 @@ class GeneralView extends ConsumerWidget {
         select: (state) => state.autoCheckUpdate,
         update: (state, value) => state.copyWith(autoCheckUpdate: value),
       ),
+      ConfigOptionsItem<UpdateChannel>(
+        title: (l) => l.updateChannel,
+        options: UpdateChannel.values,
+        textBuilder: (channel) => channel.label,
+        selector: appSettingProvider.select((state) => state.updateChannel),
+        onChanged: (ref, value) => ref
+            .read(appSettingProvider.notifier)
+            .update((state) => state.copyWith(updateChannel: value)),
+      ),
     ];
   }
 
@@ -386,7 +378,6 @@ class GeneralView extends ConsumerWidget {
 
   List<Widget> _logItems() {
     return [
-      const LogLevelItem(),
       _appSettingToggle(
         title: (l) => l.logcat,
         select: (state) => state.openLogs,
@@ -409,7 +400,7 @@ class GeneralView extends ConsumerWidget {
     return BaseScaffold(
       title: appLocalizations.general,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(
+        padding: context.listInsets.page().copyWith(
           top: context.sectionsTopPadding,
           bottom: 16 + context.bottomInset,
         ),
@@ -445,6 +436,7 @@ class GeneralView extends ConsumerWidget {
             title: appLocalizations.logsAndDiagnostics,
             items: _logItems(),
             footer: appLocalizations.logcatDesc,
+            last: true,
           ),
         ],
       ),
